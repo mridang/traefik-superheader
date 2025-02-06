@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	timeit "github.com/mridang/traefik-server-timing"
+	timeit "github.com/mridang/traefik-superheader"
 	"golang.org/x/exp/rand"
 )
 
