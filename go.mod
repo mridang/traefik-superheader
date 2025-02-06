@@ -1,4 +1,4 @@
-module github.com/mridang/traefik-server-timing
+module github.com/mridang/traefik-superheader
 
 go 1.23
 
