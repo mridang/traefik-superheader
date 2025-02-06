@@ -1,0 +1,6 @@
+displayName: Superheaders
+type: middleware
+iconPath: .assets/icon.png
+import: github.com/mridang/traefik-superheaders
+summary: 'Superheader'
+testData:
