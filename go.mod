@@ -1,11 +1,12 @@
-module github.com/mridang/traefik-superheader
+module github.com/mridang/superheader
 
 go 1.23
 
+toolchain go1.23.6
+
 require (
-	github.com/felixge/httpsnoop v1.0.0
-	github.com/mitchellh/go-server-timing v1.0.1
-	golang.org/x/exp v0.0.0-20250128182459-e0ece0dbea4c
+	github.com/mridang/traefik-superheader v0.0.0-20250206104454-16f83ac47b67
+	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 )
 
-require github.com/golang/gddo v0.0.0-20180823221919-9d8ff1c67be5 // indirect
+require github.com/felixge/httpsnoop v1.0.0 // indirect

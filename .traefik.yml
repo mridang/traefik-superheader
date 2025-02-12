@@ -1,5 +1,7 @@
-displayName: Superheaders Plugin
+displayName: Superheader Plugin
 type: middleware
-import: github.com/mridang/traefik-superheader
-iconPath: .assets/icon.png
+import: github.com/mridang/superheader
+iconPath: icon.png
 summary: 'A Traefik plugin to add the common security headers'
+testData:
+  TimeoutMillis: 2000

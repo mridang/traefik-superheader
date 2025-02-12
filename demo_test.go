@@ -1,4 +1,4 @@
-package timeit_test
+package superheader_test
 
 import (
 	"context"

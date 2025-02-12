@@ -1,11 +1,8 @@
-package timeit
+package superheader
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-
-	"github.com/felixge/httpsnoop"
 )
 
 type Config struct {
@@ -13,19 +10,27 @@ type Config struct {
 }
 
 func CreateConfig() *Config {
-	return &Config{}
+	return &Config{
+		//
+	}
 }
 
 type Demo struct {
-	//
+	next    http.Handler
+	headers map[string]string
+	name    string
 }
 
-func New(c context.Context, next http.Handler, _ *Config, name string) (http.Handler, error) {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		m := httpsnoop.CaptureMetrics(next, w, r)
-		ff := m.Duration.Milliseconds()
-		duratio := fmt.Sprintf("cache;desc=\"Traefik Ingress\";dur=%.1f", float64(ff)/1000)
-		w.Header().Set("Server-Timing", duratio)
+// New created a new Demo plugin.
+func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 
-	}), nil
+	return &Demo{
+		next: next,
+		name: name,
+	}, nil
+}
+
+func (a *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	req.Header.Set("key", "ar")
+	a.next.ServeHTTP(rw, req)
 }
