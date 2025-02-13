@@ -1,5 +1,7 @@
 github.com/felixge/httpsnoop v1.0.0 h1:gh8fMGz0rlOv/1WmRZm7OgncIOTsAj21iNJot48omJQ=
 github.com/felixge/httpsnoop v1.0.0/go.mod h1:3+D9sFq0ahK/JeJPhCBUV1xlf4/eIYrUQaxulT0VzX8=
+github.com/http-wasm/http-wasm-guest-tinygo v0.4.0 h1:sWd1hqOL8LF3DVRPXloVELTQItibKtDCtVSA4UfMf4Y=
+github.com/http-wasm/http-wasm-guest-tinygo v0.4.0/go.mod h1:zcKr7h/t5ha2ZWIMwV4iOqhfC/qno/tNPYgybVkn/MQ=
 github.com/mridang/traefik-superheader v0.0.0-20250206104454-16f83ac47b67 h1:XpHBqJVOElQmiWlIe8axZnQwc3N9ss/MsUvPs1+aM/I=
 github.com/mridang/traefik-superheader v0.0.0-20250206104454-16f83ac47b67/go.mod h1:UhwQ/Jq+nls/iSCMMH6bwfi9GF+JiHl5e3FuajN2yw4=
 golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac h1:l5+whBCLH3iH2ZNHYLbAe58bo7yrN4mVcnkHDYz5vvs=
