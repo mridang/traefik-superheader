@@ -62,10 +62,6 @@ func (sh *Demo) LogMessage(headerKey string, headerValue string) {
 }
 
 func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	log.Println("marma")
-	log.Print(sh.config)
-	req.Header.Set("key", "arx")
-
 	switch sh.config.XFrameOptions {
 	case
 		"DENY",
