@@ -18,6 +18,8 @@ type Config struct {
 	CrossOriginResourcePolicy     string `json:"crossOriginResourcePolicy,omitempty"`
 	OriginAgentCluster            string `json:"originAgentCluster,omitempty"`
 	XPermittedCrossDomainPolicies string `json:"xPermittedCrossDomainPolicies,omitempty"`
+	RemovePoweredBy               string `json:"removePoweredBy,omitempty"`
+	RemoveServerInfo              string `json:"removeServerInfo,omitempty"`
 }
 
 func CreateConfig() *Config {
@@ -33,11 +35,12 @@ func CreateConfig() *Config {
 		//XDownload
 		XFrameOptions: "SAMEORIGIN",
 		//XPermCross
-		//XPoweredB
 		XXSSProtection: "on",
 
 		XPermittedCrossDomainPolicies: "none",
 		CrossOriginEmbedderPolicy:     "unsafe-none",
+		RemovePoweredBy:               "on",
+		RemoveServerInfo:              "on",
 	}
 }
 
@@ -200,6 +203,17 @@ func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		// Skip setting the header
 	default:
 		sh.LogMessage("X-Permitted-Cross-Domain-Policies", sh.config.XPermittedCrossDomainPolicies)
+	}
+
+	switch sh.config.RemovePoweredBy {
+	case "on":
+		rw.Header().Del("X-Powered-By")
+	}
+
+	// Separate block for RemoveServerInfo config
+	switch sh.config.RemoveServerInfo {
+	case "on":
+		rw.Header().Del("Server")
 	}
 
 	sh.next.ServeHTTP(rw, req)

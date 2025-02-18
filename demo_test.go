@@ -2,6 +2,7 @@ package superheader
 
 import (
 	"context"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,8 +18,8 @@ func createHandler(config *Config) (http.Handler, error) {
 	return New(context.Background(), mockHandler, config, "test")
 }
 
-// assertResponseHeader checks if the expected header is set correctly in the response
-func assertResponseHeader(t *testing.T, headerKey string, expectedValue string, configSupplier func(*Config)) {
+// assertResponseHeader checks if the response header satisfies the provided matcher condition.
+func assertResponseHeader(t *testing.T, headerKey string, expectedValue interface{}, configSupplier func(*Config)) {
 	// Create a new config and apply inline configuration through the supplier
 	config := CreateConfig()
 	configSupplier(config)
@@ -36,12 +37,21 @@ func assertResponseHeader(t *testing.T, headerKey string, expectedValue string, 
 	// Call the handler to process the request
 	handler.ServeHTTP(rec, req)
 
-	// Retrieve the header from the response
+	// Get the actual header value from the response
 	actualHeader := rec.Header().Get(headerKey)
 
-	// Assert that the actual header matches the expected value
-	if actualHeader != expectedValue {
-		t.Errorf("Expected %s header to be %s, but got %s", headerKey, expectedValue, actualHeader)
+	// Use testify's assert package to handle various matcher conditions
+	switch v := expectedValue.(type) {
+	case string:
+		// Assert that the header matches the expected value
+		assert.Equal(t, v, actualHeader, "Header value does not match")
+
+	case nil:
+		// Assert that the header does not exist (empty)
+		assert.Empty(t, actualHeader, "Header should be removed")
+
+	default:
+		t.Errorf("Unsupported expected value type: %T", v)
 	}
 }
 
@@ -119,5 +129,19 @@ func TestOriginAgentCluster(t *testing.T) {
 func TestXPermittedCrossDomainPolicies(t *testing.T) {
 	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "none", func(config *Config) {
 		config.XPermittedCrossDomainPolicies = "none"
+	})
+}
+
+// TestRemovePoweredBy tests if "X-Powered-By" header is removed when RemovePoweredBy is "on"
+func TestRemovePoweredBy(t *testing.T) {
+	assertResponseHeader(t, "X-Powered-By", nil, func(config *Config) {
+		config.RemovePoweredBy = "on"
+	})
+}
+
+// TestRemoveServerInfo tests if "Server" header is removed when RemoveServerInfo is "on"
+func TestRemoveServerInfo(t *testing.T) {
+	assertResponseHeader(t, "Server", nil, func(config *Config) {
+		config.RemoveServerInfo = "on"
 	})
 }
