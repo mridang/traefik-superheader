@@ -61,7 +61,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (sh *Demo) LogMessage(headerKey string, headerValue string) {
-	log.Printf("Warning: Incorrect configuration for header. %s is not a valid value. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/%s", headerValue, headerKey)
+	log.Printf("Warning: Incorrect configuration for header '%s'. '%s' is not a valid value. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/%s", headerKey, headerValue, headerKey)
 }
 
 func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -71,7 +71,7 @@ func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		"SAMEORIGIN":
 		rw.Header().Set("X-Frame-Options", sh.config.XFrameOptions)
 	default:
-		log.Printf("Warning: invalid X-Frame-Options value: %s", sh.config.XFrameOptions)
+		sh.LogMessage("X-Frame-Options", sh.config.XFrameOptions)
 	}
 
 	// X-DNS-Prefetch-Control
