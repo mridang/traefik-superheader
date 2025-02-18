@@ -205,16 +205,15 @@ func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		sh.LogMessage("X-Permitted-Cross-Domain-Policies", sh.config.XPermittedCrossDomainPolicies)
 	}
 
+	sh.next.ServeHTTP(rw, req)
+
 	switch sh.config.RemovePoweredBy {
 	case "on":
 		rw.Header().Del("X-Powered-By")
 	}
 
-	// Separate block for RemoveServerInfo config
 	switch sh.config.RemoveServerInfo {
 	case "on":
-		rw.Header().Del("Server")
+		rw.Header().Del("server")
 	}
-
-	sh.next.ServeHTTP(rw, req)
 }
