@@ -8,10 +8,9 @@ import (
 )
 
 type Middleware struct {
-	next    http.Handler
-	headers map[string]string
-	name    string
-	config  *Config
+	next   http.Handler
+	name   string
+	config *Config
 }
 
 func New(_ context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
@@ -48,12 +47,13 @@ type TimingHeaderWriter struct {
 // invoked when the status code is set and before the response body is sent.
 func (writer *TimingHeaderWriter) WriteHeader(statusCode int) {
 	// Strip headers if needed
-	if writer.stripHeaders == true {
+	if writer.stripHeaders {
 		stripHeaders(writer.ResponseWriter)
 	}
 
 	elapsedTime := time.Since(writer.startTime)
-	serverTimingValue := fmt.Sprintf("name=\"traefik\", dur=%.2f, desc=\"Middleware time\"", float64(elapsedTime.Milliseconds())/1000)
+	//nolint:lll // linter rule suppression
+	serverTimingValue := fmt.Sprintf("name=\"traefik\", dur=%.2f, desc=\"Middleware time\"", float64(elapsedTime.Milliseconds()))
 
 	writer.ResponseWriter.Header().Add(ServerTiming, serverTimingValue)
 	writer.ResponseWriter.WriteHeader(statusCode)

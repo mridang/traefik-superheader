@@ -1,4 +1,4 @@
-package superheader
+package superheader_test
 
 import (
 	"fmt"
@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/mridang/superheader"
 )
 
 // toDashCase converts a camelCase or PascalCase field name to dash-case.
@@ -32,8 +34,7 @@ func ValidateConfigJSONTags(cfg interface{}) error {
 	// validKey matches lowercase letters and dash-separated words
 	validKey := regexp.MustCompile(`^[a-z]+(-[a-z]+)*$`)
 
-	// Iterate over each field in the struct
-	for i := 0; i < v.NumField(); i++ {
+	for i := range make([]int, v.NumField()) {
 		field := v.Field(i)
 		tag := field.Tag.Get("json")
 		if tag == "" {
@@ -58,10 +59,8 @@ func ValidateConfigJSONTags(cfg interface{}) error {
 	return nil
 }
 
-// TestValidateConfigJSONTags tests the ValidateConfigJSONTags function for the Config struct
 func TestValidateConfigJSONTags(t *testing.T) {
-	// Validate the Config struct directly
-	err := ValidateConfigJSONTags(Config{})
+	err := ValidateConfigJSONTags(superheader.Config{})
 	if err != nil {
 		t.Errorf("ValidateConfigJSONTags() error = %v", err)
 	}

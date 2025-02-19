@@ -6,9 +6,11 @@ import (
 )
 
 func LogMessage(headerKey string, headerValue string) {
+	//nolint:lll // linter rule suppression
 	log.Printf("Warning: Incorrect configuration for header '%s'. '%s' is not a valid value. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/%s", headerKey, headerValue, headerKey)
 }
 
+//nolint:cyclop,funlen // Suppressing cyclomatic complexity warning
 func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	switch config.XFrameOptions {
 	case
@@ -22,8 +24,8 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// X-DNS-Prefetch-Control
 	switch config.XDnsPrefetchControl {
 	case
-		"on",
-		"off":
+		Enabled,
+		Disabled:
 		rw.Header().Set(XDnsPrefetchControl, config.XDnsPrefetchControl)
 	default:
 		LogMessage(XDnsPrefetchControl, config.XDnsPrefetchControl)
@@ -32,10 +34,10 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// X-Content-Type-Options
 	switch config.XContentTypeOptions {
 	case
-		"on":
+		Enabled:
 		rw.Header().Set(XContentTypeOptions, "nosniff")
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(XContentTypeOptions, config.XContentTypeOptions)
@@ -44,10 +46,10 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// Strict-Transport-Security
 	switch config.StrictTransportSecurity {
 	case
-		"on":
+		Enabled:
 		rw.Header().Set(StrictTransportSecurity, "max-age=31536000; includeSubDomains")
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(StrictTransportSecurity, config.StrictTransportSecurity)
@@ -60,13 +62,13 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"no-referrer-when-downgrade",
 		"origin",
 		"origin-when-cross-origin",
-		"same-origin",
+		"same-origin", //nolint:goconst // linter rule suppression
 		"strict-origin",
 		"strict-origin-when-cross-origin",
 		"unsafe-url":
 		rw.Header().Set(ReferrerPolicy, config.ReferrerPolicy)
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(ReferrerPolicy, config.ReferrerPolicy)
@@ -75,13 +77,13 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// X-XSS-Protection
 	switch config.XXssProtection {
 	case
-		"on":
+		Enabled:
 		rw.Header().Set(XXssProtection, "1")
 	case
 		"block":
 		rw.Header().Set(XXssProtection, "1; mode=block")
 	case
-		"off":
+		Disabled:
 		rw.Header().Set(XXssProtection, "0")
 	default:
 		LogMessage(XXssProtection, config.XXssProtection)
@@ -96,7 +98,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"noopener-allow-popups":
 		rw.Header().Set(CrossOriginOpenerPolicy, config.CrossOriginOpenerPolicy)
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(CrossOriginOpenerPolicy, config.CrossOriginOpenerPolicy)
@@ -110,7 +112,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"credentialless":
 		rw.Header().Set(CrossOriginEmbedderPolicy, config.CrossOriginEmbedderPolicy)
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(CrossOriginEmbedderPolicy, config.CrossOriginEmbedderPolicy)
@@ -123,7 +125,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"cross-origin":
 		rw.Header().Set(CrossOriginResourcePolicy, config.CrossOriginResourcePolicy)
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(CrossOriginResourcePolicy, config.CrossOriginResourcePolicy)
@@ -131,10 +133,10 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 
 	switch config.OriginAgentCluster {
 	case
-		"on":
+		Enabled:
 		rw.Header().Set(OriginAgentCluster, "?1")
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(OriginAgentCluster, config.OriginAgentCluster)
@@ -150,7 +152,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"none-this-response":
 		rw.Header().Set(XPermittedCrossDomainPolicies, config.XPermittedCrossDomainPolicies)
 	case
-		"off":
+		Disabled:
 		// Skip setting the header
 	default:
 		LogMessage(XPermittedCrossDomainPolicies, config.XPermittedCrossDomainPolicies)

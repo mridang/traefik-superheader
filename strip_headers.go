@@ -10,7 +10,8 @@ import (
 // are stripped from the response before being sent to the client.
 //
 // For more information, refer to OWASP's best practices for securing HTTP headers:
-// https://owasp.org/www-project-secure-headers/index.html#div-bestpractices_prevent-information-disclosure-via-http-headers
+// https://owasp.org/www-project-secure-headers/index.html
+// #div-bestpractices_prevent-information-disclosure-via-http-headers
 //
 // This method works in a case-insensitive manner, meaning it will remove headers like
 // "X-Powered-By", "x-powered-by", or any case variation.

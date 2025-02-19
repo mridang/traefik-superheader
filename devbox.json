@@ -3,11 +3,11 @@
   "packages": [
     "golangci-lint@latest",
     "tinygo@latest",
-    "go@1.23"
+    "go@1.23.5"
   ],
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "export \"GOROOT=$(go env GOROOT)\""
     ],
     "scripts": {
       "test": [

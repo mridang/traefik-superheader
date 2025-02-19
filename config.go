@@ -17,19 +17,15 @@ type Config struct {
 
 func CreateConfig() *Config {
 	return &Config{
-		//CSP
-		CrossOriginOpenerPolicy:   "unsafe-none",
-		CrossOriginResourcePolicy: "same-origin",
-		OriginAgentCluster:        "on",
-		ReferrerPolicy:            "off",
-		StrictTransportSecurity:   "off",
-		XContentTypeOptions:       "on",
-		XDnsPrefetchControl:       "on",
-		//XDownload
-		XFrameOptions: "SAMEORIGIN",
-		//XPermCross
-		XXssProtection: "on",
-
+		CrossOriginOpenerPolicy:       "unsafe-none",
+		CrossOriginResourcePolicy:     "same-origin",
+		OriginAgentCluster:            "on",
+		ReferrerPolicy:                "off",
+		StrictTransportSecurity:       "off",
+		XContentTypeOptions:           "on",
+		XDnsPrefetchControl:           "on",
+		XFrameOptions:                 "SAMEORIGIN",
+		XXssProtection:                "on",
 		XPermittedCrossDomainPolicies: "none",
 		CrossOriginEmbedderPolicy:     "unsafe-none",
 		RemovePoweredBy:               "on",

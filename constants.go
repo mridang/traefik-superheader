@@ -1,6 +1,5 @@
 package superheader
 
-// Header constants
 const (
 	XFrameOptions                 = "X-Frame-Options"
 	XDnsPrefetchControl           = "X-DNS-Prefetch-Control"
@@ -14,4 +13,6 @@ const (
 	OriginAgentCluster            = "Origin-Agent-Cluster"
 	XPermittedCrossDomainPolicies = "X-Permitted-Cross-Domain-Policies"
 	ServerTiming                  = "Server-Timing"
+	Enabled                       = "on"
+	Disabled                      = "off"
 )
