@@ -14,9 +14,9 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	case
 		"DENY",
 		"SAMEORIGIN":
-		rw.Header().Set("X-Frame-Options", config.XFrameOptions)
+		rw.Header().Set(XFrameOptions, config.XFrameOptions)
 	default:
-		LogMessage("X-Frame-Options", config.XFrameOptions)
+		LogMessage(XFrameOptions, config.XFrameOptions)
 	}
 
 	// X-DNS-Prefetch-Control
@@ -24,33 +24,33 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	case
 		"on",
 		"off":
-		rw.Header().Set("X-DNS-Prefetch-Control", config.XDnsPrefetchControl)
+		rw.Header().Set(XDnsPrefetchControl, config.XDnsPrefetchControl)
 	default:
-		LogMessage("X-DNS-Prefetch-Control", config.XDnsPrefetchControl)
+		LogMessage(XDnsPrefetchControl, config.XDnsPrefetchControl)
 	}
 
 	// X-Content-Type-Options
 	switch config.XContentTypeOptions {
 	case
 		"on":
-		rw.Header().Set("X-Content-Type-Options", "nosniff")
+		rw.Header().Set(XContentTypeOptions, "nosniff")
 	case
 		"off":
 		// Skip setting the header
 	default:
-		LogMessage("X-Content-Type-Options", config.XContentTypeOptions)
+		LogMessage(XContentTypeOptions, config.XContentTypeOptions)
 	}
 
 	// Strict-Transport-Security
 	switch config.StrictTransportSecurity {
 	case
 		"on":
-		rw.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		rw.Header().Set(StrictTransportSecurity, "max-age=31536000; includeSubDomains")
 	case
 		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Strict-Transport-Security", config.StrictTransportSecurity)
+		LogMessage(StrictTransportSecurity, config.StrictTransportSecurity)
 	}
 
 	// Referrer-Policy
@@ -64,26 +64,27 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"strict-origin",
 		"strict-origin-when-cross-origin",
 		"unsafe-url":
-		rw.Header().Set("Referrer-Policy", config.ReferrerPolicy)
-	case "off":
+		rw.Header().Set(ReferrerPolicy, config.ReferrerPolicy)
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Referrer-Policy", config.ReferrerPolicy)
+		LogMessage(ReferrerPolicy, config.ReferrerPolicy)
 	}
 
 	// X-XSS-Protection
 	switch config.XXssProtection {
 	case
 		"on":
-		rw.Header().Set("X-XSS-Protection", "1")
+		rw.Header().Set(XXssProtection, "1")
 	case
 		"block":
-		rw.Header().Set("X-XSS-Protection", "1; mode=block")
+		rw.Header().Set(XXssProtection, "1; mode=block")
 	case
 		"off":
-		rw.Header().Set("X-XSS-Protection", "0")
+		rw.Header().Set(XXssProtection, "0")
 	default:
-		LogMessage("X-XSS-Protection", config.XXssProtection)
+		LogMessage(XXssProtection, config.XXssProtection)
 	}
 
 	// Cross-Origin-Opener-Policy
@@ -93,11 +94,12 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"same-origin-allow-popups",
 		"same-origin",
 		"noopener-allow-popups":
-		rw.Header().Set("Cross-Origin-Opener-Policy", config.CrossOriginOpenerPolicy)
-	case "off":
+		rw.Header().Set(CrossOriginOpenerPolicy, config.CrossOriginOpenerPolicy)
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Cross-Origin-Opener-Policy", config.CrossOriginOpenerPolicy)
+		LogMessage(CrossOriginOpenerPolicy, config.CrossOriginOpenerPolicy)
 	}
 
 	// Cross-Origin-Embedder-Policy
@@ -106,11 +108,12 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"unsafe-none",
 		"require-corp",
 		"credentialless":
-		rw.Header().Set("Cross-Origin-Embedder-Policy", config.CrossOriginEmbedderPolicy)
-	case "off":
+		rw.Header().Set(CrossOriginEmbedderPolicy, config.CrossOriginEmbedderPolicy)
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Cross-Origin-Embedder-Policy", config.CrossOriginEmbedderPolicy)
+		LogMessage(CrossOriginEmbedderPolicy, config.CrossOriginEmbedderPolicy)
 	}
 
 	switch config.CrossOriginResourcePolicy {
@@ -118,21 +121,23 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"same-origin",
 		"same-site",
 		"cross-origin":
-		rw.Header().Set("Cross-Origin-Resource-Policy", config.CrossOriginResourcePolicy)
-	case "off":
+		rw.Header().Set(CrossOriginResourcePolicy, config.CrossOriginResourcePolicy)
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Cross-Origin-Resource-Policy", config.CrossOriginResourcePolicy)
+		LogMessage(CrossOriginResourcePolicy, config.CrossOriginResourcePolicy)
 	}
 
 	switch config.OriginAgentCluster {
 	case
 		"on":
-		rw.Header().Set("Origin-Agent-Cluster", "?1")
-	case "off":
+		rw.Header().Set(OriginAgentCluster, "?1")
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Origin-Agent-Cluster", config.OriginAgentCluster)
+		LogMessage(OriginAgentCluster, config.OriginAgentCluster)
 	}
 
 	switch config.XPermittedCrossDomainPolicies {
@@ -143,10 +148,11 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		"by-ftp-filename",
 		"all",
 		"none-this-response":
-		rw.Header().Set("X-Permitted-Cross-Domain-Policies", config.XPermittedCrossDomainPolicies)
-	case "off":
+		rw.Header().Set(XPermittedCrossDomainPolicies, config.XPermittedCrossDomainPolicies)
+	case
+		"off":
 		// Skip setting the header
 	default:
-		LogMessage("X-Permitted-Cross-Domain-Policies", config.XPermittedCrossDomainPolicies)
+		LogMessage(XPermittedCrossDomainPolicies, config.XPermittedCrossDomainPolicies)
 	}
 }
