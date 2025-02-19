@@ -18,3 +18,7 @@ vendor:
 
 clean:
 	rm -rf ./vendor
+
+format:
+	goimports -w .
+	gofmt -s -w .
