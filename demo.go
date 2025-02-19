@@ -19,7 +19,6 @@ type Config struct {
 	OriginAgentCluster            string `json:"origin-agent-cluster,omitempty"`
 	XPermittedCrossDomainPolicies string `json:"x-permitted-cross-domain-policies,omitempty"`
 	RemovePoweredBy               string `json:"remove-powered-by,omitempty"`
-	RemoveServerInfo              string `json:"remove-server-info,omitempty"`
 }
 
 func CreateConfig() *Config {
@@ -40,7 +39,6 @@ func CreateConfig() *Config {
 		XPermittedCrossDomainPolicies: "none",
 		CrossOriginEmbedderPolicy:     "unsafe-none",
 		RemovePoweredBy:               "on",
-		RemoveServerInfo:              "on",
 	}
 }
 
@@ -209,11 +207,6 @@ func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	switch sh.config.RemovePoweredBy {
 	case "on":
-		rw.Header().Del("X-Powered-By")
-	}
-
-	switch sh.config.RemoveServerInfo {
-	case "on":
-		rw.Header().Del("server")
+		stripHeaders(rw, req)
 	}
 }

@@ -352,6 +352,6 @@ func TestRemovePoweredBy(t *testing.T) {
 func TestRemoveServerInfo(t *testing.T) {
 	assertResponseHeader(t, "Server", nil,
 		func(config *Config) {
-			config.RemoveServerInfo = "on"
+			config.RemovePoweredBy = "on"
 		})
 }
