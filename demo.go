@@ -7,19 +7,19 @@ import (
 )
 
 type Config struct {
-	XFrameOptions                 string `json:"xFrameOptions,omitempty"`
-	XDNSPrefetchControl           string `json:"xDnsPrefetchControl,omitempty"`
-	XContentTypeOptions           string `json:"xContentTypeOptions,omitempty"`
-	StrictTransportSecurity       string `json:"strictTransportSecurity,omitempty"`
-	ReferrerPolicy                string `json:"referrerPolicy,omitempty"`
-	XXSSProtection                string `json:"xXssProtection,omitempty"`
-	CrossOriginOpenerPolicy       string `json:"crossOriginOpenerPolicy,omitempty"`
-	CrossOriginEmbedderPolicy     string `json:"crossOriginEmbedderPolicy,omitempty"`
-	CrossOriginResourcePolicy     string `json:"crossOriginResourcePolicy,omitempty"`
-	OriginAgentCluster            string `json:"originAgentCluster,omitempty"`
-	XPermittedCrossDomainPolicies string `json:"xPermittedCrossDomainPolicies,omitempty"`
-	RemovePoweredBy               string `json:"removePoweredBy,omitempty"`
-	RemoveServerInfo              string `json:"removeServerInfo,omitempty"`
+	XFrameOptions                 string `json:"x-frame-options,omitempty"`
+	XDNSPrefetchControl           string `json:"x-dns-prefetch-control,omitempty"`
+	XContentTypeOptions           string `json:"x-content-type-options,omitempty"`
+	StrictTransportSecurity       string `json:"strict-transport-security,omitempty"`
+	ReferrerPolicy                string `json:"referrer-policy,omitempty"`
+	XXSSProtection                string `json:"x-xss-protection,omitempty"`
+	CrossOriginOpenerPolicy       string `json:"cross-origin-opener-policy,omitempty"`
+	CrossOriginEmbedderPolicy     string `json:"cross-origin-embedder-policy,omitempty"`
+	CrossOriginResourcePolicy     string `json:"cross-origin-resource-policy,omitempty"`
+	OriginAgentCluster            string `json:"origin-agent-cluster,omitempty"`
+	XPermittedCrossDomainPolicies string `json:"x-permitted-cross-domain-policies,omitempty"`
+	RemovePoweredBy               string `json:"remove-powered-by,omitempty"`
+	RemoveServerInfo              string `json:"remove-server-info,omitempty"`
 }
 
 func CreateConfig() *Config {
