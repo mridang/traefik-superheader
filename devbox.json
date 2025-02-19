@@ -1,18 +1,18 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
-  "packages": [
-    "golangci-lint@latest",
-    "tinygo@latest",
-    "go@1.23"
-  ],
-  "shell": {
-    "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
-    ],
-    "scripts": {
-      "test": [
-        "echo \"Error: no test specified\" && exit 1"
-      ]
-    }
-  }
+	"$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
+	"packages": [
+		"golangci-lint@latest",
+		"tinygo@latest",
+		"go@1.23"
+	],
+	"shell": {
+		"init_hook": [
+			"echo 'Welcome to devbox!' > /dev/null"
+		],
+		"scripts": {
+			"test": [
+				"echo \"Error: no test specified\" && exit 1"
+			]
+		}
+	}
 }

@@ -13,41 +13,41 @@ the static configuration.
 
 ```yaml
 experimental:
-  plugins:
-    superheader:
-      moduleName: "github.com/mridang/traefik-superheader"
-      version: "v1.0.0"
+	plugins:
+		superheader:
+			moduleName: "github.com/mridang/traefik-superheader"
+			version: "v1.0.0"
 ```
 
 ##### Example 1: Traefik Configuration Using YAML
 
 ```yaml
 http:
-  routers:
-    my-router:
-      rule: "Host(`example.com`)"
-      entryPoints:
-        - web
-      middlewares:
-        - my-middleware  # Apply the middleware to the router
+	routers:
+		my-router:
+			rule: "Host(`example.com`)"
+			entryPoints:
+				- web
+			middlewares:
+				- my-middleware  # Apply the middleware to the router
 
 middlewares:
-  superheader:
-    plugin:
-      superheader:
-        x-frame-options: DENY
-        x-dns-prefetch-control: off
-        x-content-type-options: nosniff
-        strict-transport-security: max-age=31536000; includeSubDomains
-        referrer-policy: no-referrer
-        x-xss-protection: 1; mode=block
-        cross-origin-opener-policy: same-origin
-        cross-origin-embedder-policy: require-corp
-        cross-origin-resource-policy: same-origin
-        origin-agent-cluster: ?1
-        x-permitted-cross-domain-policies: master-only
-        remove-powered-by: on
-        remove-server-info: on
+	superheader:
+		plugin:
+			superheader:
+				x-frame-options: DENY
+				x-dns-prefetch-control: off
+				x-content-type-options: nosniff
+				strict-transport-security: max-age=31536000; includeSubDomains
+				referrer-policy: no-referrer
+				x-xss-protection: 1; mode=block
+				cross-origin-opener-policy: same-origin
+				cross-origin-embedder-policy: require-corp
+				cross-origin-resource-policy: same-origin
+				origin-agent-cluster: ?1
+				x-permitted-cross-domain-policies: master-only
+				remove-powered-by: on
+				remove-server-info: on
 ```
 
 ##### Example 2: Traefik Configuration Using CLI Args
@@ -76,56 +76,55 @@ traefik \
   --http.middlewares.superheader.plugin.superheader.remove-server-info=on
 ```
 
-
 ##### Example 3: Usage in Docker Compose
 
 ```yaml
 services:
-  traefik:
-    image: traefik:3.3.3
-    ports:
-      - "7080:80"
-      - "9080:8080"
-    command:
-      - --api.dashboard=false
-      - --api.insecure=false
-      - --log.level=DEBUG
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --experimental.plugins.superheader.moduleName=github.com/mridang/superheader
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
+	traefik:
+		image: traefik:3.3.3
+		ports:
+			- "7080:80"
+			- "9080:8080"
+		command:
+			- --api.dashboard=false
+			- --api.insecure=false
+			- --log.level=DEBUG
+			- --providers.docker=true
+			- --entrypoints.web.address=:80
+			- --entrypoints.websecure.address=:443
+			- --experimental.plugins.superheader.moduleName=github.com/mridang/superheader
+		volumes:
+			- '/var/run/docker.sock:/var/run/docker.sock'
+		labels:
+			- traefik.enable=true
+			- traefik.http.services.traefik.loadbalancer.server.port=8080
 
-  # A sample service that uses the middleware with the defaults
-  foo:
-    image: traefik/whoami
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.foo.rule=PathPrefix(`/foo`)
-      - traefik.http.routers.foo.middlewares=superheader
-      - traefik.http.routers.foo.entrypoints=websecure
+	# A sample service that uses the middleware with the defaults
+	foo:
+		image: traefik/whoami
+		labels:
+			- traefik.enable=true
+			- traefik.http.routers.foo.rule=PathPrefix(`/foo`)
+			- traefik.http.routers.foo.middlewares=superheader
+			- traefik.http.routers.foo.entrypoints=websecure
 
-  # A sample service that uses the middleware with custom options
-  bar:
-    image: traefik/whoami
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.bar.rule=PathPrefix(`/bar`)
-      - traefik.http.routers.bar.middlewares=superheader
-      - traefik.http.middlewares.superheader.plugin.superheader.x-frame-options="DENY"
-      - traefik.http.routers.bar.entrypoints=websecure
+	# A sample service that uses the middleware with custom options
+	bar:
+		image: traefik/whoami
+		labels:
+			- traefik.enable=true
+			- traefik.http.routers.bar.rule=PathPrefix(`/bar`)
+			- traefik.http.routers.bar.middlewares=superheader
+			- traefik.http.middlewares.superheader.plugin.superheader.x-frame-options="DENY"
+			- traefik.http.routers.bar.entrypoints=websecure
 
-  # A sample service that does not use the middleware at all
-  baz:
-    image: traefik/whoami
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.baz.rule=PathPrefix(`/baz`)
-      - traefik.http.routers.baz.entrypoints=web
+	# A sample service that does not use the middleware at all
+	baz:
+		image: traefik/whoami
+		labels:
+			- traefik.enable=true
+			- traefik.http.routers.baz.rule=PathPrefix(`/baz`)
+			- traefik.http.routers.baz.entrypoints=web
 ```
 
 ### Options
@@ -318,7 +317,8 @@ The valid values are as follows:
 - `on`: Removes the sensitive headers.
 - `off`: Disabled the removal of headers
 
-For more information, visit: [OWASP: Remove Headers](https://owasp.org/www-project-secure-headers/ci/headers_remove.json)
+For more information,
+visit: [OWASP: Remove Headers](https://owasp.org/www-project-secure-headers/ci/headers_remove.json)
 
 ## Caveats
 
