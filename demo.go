@@ -2,7 +2,9 @@ package superheader
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 )
 
 type Config struct {
@@ -57,13 +59,19 @@ func New(_ context.Context, next http.Handler, config *Config, name string) (htt
 	}, nil
 }
 
+// ServeHTTP processes the incoming HTTP request, strips certain headers if
+// configured, and adds a Server-Timing header to the response.
+// The execution time of the request handling is measured and formatted in
+// milliseconds (e.g., "123.45ms") and added to the response header as
+// "Server-Timing".
 func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	startTime := time.Now()
 	sh.next.ServeHTTP(rw, req)
-
 	AddSecureHeaders(sh.config, rw, req)
-
-	switch sh.config.RemovePoweredBy {
-	case "on":
+	if sh.config.RemovePoweredBy == "on" {
 		stripHeaders(rw, req)
 	}
+	elapsedTime := time.Since(startTime)
+	serverTimingValue := fmt.Sprintf("name=\"processing\", dur=%.2f, desc=\"Request processing time\"", float64(elapsedTime.Milliseconds())/1000)
+	rw.Header().Add("Server-Timing", serverTimingValue)
 }
