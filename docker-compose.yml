@@ -1,27 +1,31 @@
 services:
-  traefik:
-    image: traefik:3.3.3
-    ports:
-      - "7080:80"
-      - "9080:8080"
-    command:
-      - --api.dashboard=false
-      - --api.insecure=false
-      - --log.level=DEBUG
-      - --experimental.localPlugins.superheader.moduleName=github.com/mridang/superheader
-      - --providers.docker=true
-      - --entrypoints.http.address=:80
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '.:/plugins-local/src/github.com/mridang/superheader'
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
-      - traefik.http.middlewares.superheader.plugin.superheader=true
+    traefik:
+        image: traefik:3.3.3
+        ports:
+            - "7080:80"
+            - "7081:443"
+        command:
+            - --api.dashboard=false
+            - --api.insecure=false
+            - --log.level=DEBUG
+            - --experimental.localPlugins.superheader.moduleName=github.com/mridang/superheader
+            - --providers.docker=true
+            - --entrypoints.http.address=:80
+            - --entrypoints.websecure.address=:443
+            - --entrypoints.websecure.http.tls=true
+        volumes:
+            - '/var/run/docker.sock:/var/run/docker.sock'
+            - '.:/plugins-local/src/github.com/mridang/superheader'
+        labels:
+            - traefik.enable=true
+            - traefik.http.services.traefik.loadbalancer.server.port=8080
+            - traefik.http.middlewares.superheader.plugin.superheader=true
 
-  website:
-    image: traefik/whoami
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.website.rule=PathPrefix(`/website`)
-      - traefik.http.routers.website.middlewares=superheader
+    website:
+        image: traefik/whoami
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.website.rule=PathPrefix(`/website`)
+            - traefik.http.routers.website.entrypoints=websecure
+            - traefik.http.routers.website.tls=true
+            - traefik.http.routers.website.middlewares=superheader
