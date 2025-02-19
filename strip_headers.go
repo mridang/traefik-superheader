@@ -14,7 +14,7 @@ import (
 //
 // This method works in a case-insensitive manner, meaning it will remove headers like
 // "X-Powered-By", "x-powered-by", or any case variation.
-func stripHeaders(rw http.ResponseWriter, _ *http.Request) {
+func stripHeaders(rw http.ResponseWriter) {
 	// List of headers to strip
 	headersToRemove := []string{
 		"$wsep",

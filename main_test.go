@@ -70,19 +70,19 @@ func TestXDNSPrefetchControl(t *testing.T) {
 	// Test "on"
 	assertResponseHeader(t, "X-DNS-Prefetch-Control", "on",
 		func(config *Config) {
-			config.XDNSPrefetchControl = "on"
+			config.XDnsPrefetchControl = "on"
 		})
 
 	// Test "off"
 	assertResponseHeader(t, "X-DNS-Prefetch-Control", "off",
 		func(config *Config) {
-			config.XDNSPrefetchControl = "off"
+			config.XDnsPrefetchControl = "off"
 		})
 
 	// Test invalid value (header should not be set)
 	assertResponseHeader(t, "X-DNS-Prefetch-Control", nil,
 		func(config *Config) {
-			config.XDNSPrefetchControl = "invalid"
+			config.XDnsPrefetchControl = "invalid"
 		})
 }
 
@@ -181,19 +181,19 @@ func TestXXSSProtection(t *testing.T) {
 	// Test "on"
 	assertResponseHeader(t, "X-XSS-Protection", "1",
 		func(config *Config) {
-			config.XXSSProtection = "on"
+			config.XXssProtection = "on"
 		})
 
 	// Test "block"
 	assertResponseHeader(t, "X-XSS-Protection", "1; mode=block",
 		func(config *Config) {
-			config.XXSSProtection = "block"
+			config.XXssProtection = "block"
 		})
 
 	// Test "off"
 	assertResponseHeader(t, "X-XSS-Protection", "0",
 		func(config *Config) {
-			config.XXSSProtection = "off"
+			config.XXssProtection = "off"
 		})
 }
 

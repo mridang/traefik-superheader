@@ -9,7 +9,7 @@ func LogMessage(headerKey string, headerValue string) {
 	log.Printf("Warning: Incorrect configuration for header '%s'. '%s' is not a valid value. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/%s", headerKey, headerValue, headerKey)
 }
 
-func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
+func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	switch config.XFrameOptions {
 	case
 		"DENY",
@@ -20,13 +20,13 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 	}
 
 	// X-DNS-Prefetch-Control
-	switch config.XDNSPrefetchControl {
+	switch config.XDnsPrefetchControl {
 	case
 		"on",
 		"off":
-		rw.Header().Set("X-DNS-Prefetch-Control", config.XDNSPrefetchControl)
+		rw.Header().Set("X-DNS-Prefetch-Control", config.XDnsPrefetchControl)
 	default:
-		LogMessage("X-DNS-Prefetch-Control", config.XDNSPrefetchControl)
+		LogMessage("X-DNS-Prefetch-Control", config.XDnsPrefetchControl)
 	}
 
 	// X-Content-Type-Options
@@ -72,7 +72,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 	}
 
 	// X-XSS-Protection
-	switch config.XXSSProtection {
+	switch config.XXssProtection {
 	case
 		"on":
 		rw.Header().Set("X-XSS-Protection", "1")
@@ -83,7 +83,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 		"off":
 		rw.Header().Set("X-XSS-Protection", "0")
 	default:
-		LogMessage("X-XSS-Protection", config.XXSSProtection)
+		LogMessage("X-XSS-Protection", config.XXssProtection)
 	}
 
 	// Cross-Origin-Opener-Policy
