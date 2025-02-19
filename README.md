@@ -130,13 +130,17 @@ services:
 
 ### Options
 
-All values are case-insensitive.
+The middleware exposes a few options to allow customising the behaviour. To make
+it harder to misconfigure the plugin all the keys and values are lowercased. All
+the values are case-insensitive.
 
 #### Configuring the X-Frame-Options Header
 
 This header can be configured by the "x-frame-options" header to control whether
 a browser should be allowed to render a page in a `<frame>`, `<iframe>`,
-`<embed>`, or `<object>`. The valid values with the explanations are as follows:
+`<embed>`, or `<object>`.
+
+The valid values are as follows:
 
 - `deny`: Prevents any domain from framing the content.
 - `sameorigin`: Allows the same domain to frame the content.
@@ -147,10 +151,12 @@ visit: [MDN: X-Frame-Options](https://developer.mozilla.org/en-US/docs/Web/HTTP/
 #### Configuring the X-DNS-Prefetch-Control Header
 
 This header can be configured by the "x-dns-prefetch-control" header to control DNS
-prefetching. The valid values with the explanations are as follows:
+prefetching.
 
-- `off`: Disables DNS prefetching.
+The valid values are as follows:
+
 - `on`: Enables DNS prefetching.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: X-DNS-Prefetch-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-DNS-Prefetch-Control)
@@ -158,9 +164,12 @@ visit: [MDN: X-DNS-Prefetch-Control](https://developer.mozilla.org/en-US/docs/We
 #### Configuring the X-Content-Type-Options Header
 
 This header can be configured by the "x-content-type-options" header to tell
-the browser to not sniff the MIME type of the content. The valid value is:
+the browser to not sniff the MIME type of the content.
+
+The valid values are as follows:
 
 - `nosniff`: Prevents browsers from attempting to infer the MIME type.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: X-Content-Type-Options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options)
@@ -168,11 +177,13 @@ visit: [MDN: X-Content-Type-Options](https://developer.mozilla.org/en-US/docs/We
 #### Configuring the Strict-Transport-Security Header
 
 This header can be configured by the "strict-transport-security" header to
-enforce secure (HTTPS) connections to the server. The valid value with the
-explanation is:
+enforce secure (HTTPS) connections to the server.
+
+The valid values are as follows:
 
 - `max-age=<seconds>; includeSubDomains`: Enforces HTTPS for the specified
   duration and includes all subdomains.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
@@ -180,8 +191,9 @@ visit: [MDN: Strict-Transport-Security](https://developer.mozilla.org/en-US/docs
 #### Configuring the Referrer-Policy Header
 
 This header can be configured by the "referrer-policy" header to control how
-much referrer information should be included with requests. The valid values
-with the explanations are as follows:
+much referrer information should be included with requests.
+
+The valid values are as follows:
 
 - `no-referrer`: No referrer information is sent.
 - `no-referrer-when-downgrade`: Referrer is sent for same-origin requests,
@@ -195,6 +207,7 @@ with the explanations are as follows:
 - `strict-origin-when-cross-origin`: Sends the origin as referrer for
   same-origin requests, and the origin for cross-origin requests.
 - `unsafe-url`: Always sends the full URL as referrer.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Referrer-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
@@ -203,7 +216,8 @@ visit: [MDN: Referrer-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/
 
 This header can be configured by the "x-xss-protection" header to enable or
 disable cross-site scripting (XSS) filters built into most modern browsers.
-The valid values with the explanations are as follows:
+
+The valid values are as follows:
 
 - `1`: Enables the XSS filter.
 - `1; mode=block`: Enables the XSS filter and blocks the page if an attack
@@ -217,8 +231,9 @@ visit: [MDN: X-XSS-Protection](https://developer.mozilla.org/en-US/docs/Web/HTTP
 
 This header can be configured by the "cross-origin-opener-policy" header to
 control the interaction between the browsing context (window or tab) and other
-contexts (e.g., windows or tabs from other origins). The valid values with
-the explanations are as follows:
+contexts (e.g., windows or tabs from other origins).
+
+The valid values are as follows:
 
 - `unsafe-none`: Allows all interactions with other contexts.
 - `same-origin-allow-popups`: Allows same-origin windows to interact with
@@ -233,14 +248,16 @@ visit: [MDN: Cross-Origin-Opener-Policy](https://developer.mozilla.org/en-US/doc
 #### Configuring the Cross-Origin-Embedder-Policy Header
 
 This header can be configured by the "cross-origin-embedder-policy" header
-to control the resources that can be embedded by a document. The valid values
-with the explanations are as follows:
+to control the resources that can be embedded by a document.
+
+The valid values are as follows:
 
 - `unsafe-none`: Allows all cross-origin resources to be embedded.
 - `require-corp`: Requires cross-origin resources to be explicitly marked
   as permissive.
 - `credentialless`: Requires cross-origin resources to allow for credentials
   to be omitted.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Cross-Origin-Embedder-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy)
@@ -248,12 +265,14 @@ visit: [MDN: Cross-Origin-Embedder-Policy](https://developer.mozilla.org/en-US/d
 #### Configuring the Cross-Origin-Resource-Policy Header
 
 This header can be configured by the "cross-origin-resource-policy" header
-to control the cross-origin requests that a resource can make. The valid values
-with the explanations are as follows:
+to control the cross-origin requests that a resource can make.
+
+The valid values are as follows:
 
 - `same-origin`: Only allows requests from the same origin.
 - `same-site`: Allows requests from the same site.
 - `cross-origin`: Allows all cross-origin requests.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Cross-Origin-Resource-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Resource-Policy)
@@ -261,9 +280,12 @@ visit: [MDN: Cross-Origin-Resource-Policy](https://developer.mozilla.org/en-US/d
 #### Configuring the Origin-Agent-Cluster Header
 
 This header can be configured by the "origin-agent-cluster" header to allow
-for isolating resources by user agent. The valid value with the explanation is:
+for isolating resources by user agent.
+
+The valid values are as follows:
 
 - `?1`: Enables origin agent clustering.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Origin-Agent-Cluster](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin-Agent-Cluster)
@@ -271,8 +293,9 @@ visit: [MDN: Origin-Agent-Cluster](https://developer.mozilla.org/en-US/docs/Web/
 #### Configuring the X-Permitted-Cross-Domain-Policies Header
 
 This header can be configured by the "x-permitted-cross-domain-policies"
-header to control the permissible cross-domain policies. The valid values
-with the explanations are as follows:
+header to control the permissible cross-domain policies.
+
+The valid values are as follows:
 
 - `none`: No cross-domain policies are allowed.
 - `master-only`: Only the master policy is allowed.
@@ -280,27 +303,22 @@ with the explanations are as follows:
 - `by-ftp-filename`: Policies can be defined by FTP filename.
 - `all`: All cross-domain policies are allowed.
 - `none-this-response`: No policies are allowed for the current response.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: X-Permitted-Cross-Domain-Policies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Permitted-Cross-Domain-Policies)
 
-#### Configuring the Remove-Powered-By Header
+#### Configuring the removal of headers
 
-This header can be configured by the "remove-powered-by" setting to remove
-the `X-Powered-By` header. The valid value is:
+The OWASP guidelines recommend the removal of certain headers to prevent
+information disclosure. This feature can be toggled.
 
-- `on`: Removes the `X-Powered-By` header.
+The valid values are as follows:
 
-For more information, visit: [MDN: X-Powered-By](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Powered-By)
+- `on`: Removes the sensitive headers.
+- `off`: Disabled the removal of headers
 
-#### Configuring the Remove-Server-Info Header
-
-This header can be configured by the "remove-server-info" setting to remove
-the `server` header. The valid value is:
-
-- `on`: Removes the `server` header.
-
-For more information, visit: [MDN: Server](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server)
+For more information, visit: [OWASP: Remove Headers](https://owasp.org/www-project-secure-headers/ci/headers_remove.json)
 
 ## Caveats
 
