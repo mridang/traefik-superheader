@@ -66,8 +66,8 @@ func New(_ context.Context, next http.Handler, config *Config, name string) (htt
 // "Server-Timing".
 func (sh *Demo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	startTime := time.Now()
-	sh.next.ServeHTTP(rw, req)
 	AddSecureHeaders(sh.config, rw, req)
+	sh.next.ServeHTTP(rw, req)
 	if sh.config.RemovePoweredBy == "on" {
 		stripHeaders(rw, req)
 	}
