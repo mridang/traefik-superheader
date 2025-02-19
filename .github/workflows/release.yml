@@ -1,4 +1,4 @@
-name: Release to Gradle
+name: Release to Github
 
 on:
   push:
