@@ -13,4 +13,5 @@ const (
 	CrossOriginResourcePolicy     = "Cross-Origin-Resource-Policy"
 	OriginAgentCluster            = "Origin-Agent-Cluster"
 	XPermittedCrossDomainPolicies = "X-Permitted-Cross-Domain-Policies"
+	ServerTiming                  = "Server-Timing"
 )

@@ -55,7 +55,7 @@ func (writer *TimingHeaderWriter) WriteHeader(statusCode int) {
 	elapsedTime := time.Since(writer.startTime)
 	serverTimingValue := fmt.Sprintf("name=\"traefik\", dur=%.2f, desc=\"Middleware time\"", float64(elapsedTime.Milliseconds())/1000)
 
-	writer.ResponseWriter.Header().Add("Server-Timing", serverTimingValue)
+	writer.ResponseWriter.Header().Add(ServerTiming, serverTimingValue)
 	writer.ResponseWriter.WriteHeader(statusCode)
 }
 
