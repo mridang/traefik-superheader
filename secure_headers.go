@@ -38,7 +38,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 		"off":
 		// Skip setting the header
 	default:
-		LogMessage("X-Content-Type-Options", config.XDNSPrefetchControl)
+		LogMessage("X-Content-Type-Options", config.XContentTypeOptions)
 	}
 
 	// Strict-Transport-Security
@@ -50,7 +50,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 		"off":
 		// Skip setting the header
 	default:
-		LogMessage("Strict-Transport-Security", config.XDNSPrefetchControl)
+		LogMessage("Strict-Transport-Security", config.StrictTransportSecurity)
 	}
 
 	// Referrer-Policy
@@ -68,7 +68,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 	case "off":
 		// Skip setting the header
 	default:
-		LogMessage("Referrer-Policy", config.XDNSPrefetchControl)
+		LogMessage("Referrer-Policy", config.ReferrerPolicy)
 	}
 
 	// X-XSS-Protection
@@ -83,7 +83,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 		"off":
 		rw.Header().Set("X-XSS-Protection", "0")
 	default:
-		LogMessage("X-XSS-Protection", config.XDNSPrefetchControl)
+		LogMessage("X-XSS-Protection", config.XXSSProtection)
 	}
 
 	// Cross-Origin-Opener-Policy
@@ -97,7 +97,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter, _ *http.Request) {
 	case "off":
 		// Skip setting the header
 	default:
-		LogMessage("Cross-Origin-Opener-Policy", config.XDNSPrefetchControl)
+		LogMessage("Cross-Origin-Opener-Policy", config.CrossOriginOpenerPolicy)
 	}
 
 	// Cross-Origin-Embedder-Policy
