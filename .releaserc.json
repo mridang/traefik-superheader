@@ -12,7 +12,6 @@
         "publishCmd": "make release"
       }
     ],
-    "gradle-semantic-release-plugin",
     [
       "@semantic-release/github",
       {
