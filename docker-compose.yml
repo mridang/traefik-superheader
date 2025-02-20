@@ -21,11 +21,44 @@ services:
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.superheader.plugin.superheader=true
 
-  website:
+  hello:
+    image: testcontainers/helloworld
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.website.rule=PathPrefix(`/hello`)
+      - traefik.http.routers.website.entrypoints=websecure
+      - traefik.http.routers.website.tls=true
+      - traefik.http.routers.website.middlewares=securehello
+      - traefik.http.middlewares.securehello.plugin.superheader.x-frame-options=DENY
+      - traefik.http.middlewares.securehello.plugin.superheader.x-dns-prefetch-control=on
+      - traefik.http.middlewares.securehello.plugin.superheader.x-content-type-options=on
+      - traefik.http.middlewares.securehello.plugin.superheader.strict-transport-security=on
+      - traefik.http.middlewares.securehello.plugin.superheader.referrer-policy=on
+      - traefik.http.middlewares.securehello.plugin.superheader.x-xss-protection=on
+      - traefik.http.middlewares.securehello.plugin.superheader.cross-origin-opener-policy=on
+      - traefik.http.middlewares.securehello.plugin.superheader.cross-origin-embedder-policy=on
+      - traefik.http.middlewares.securehello.plugin.superheader.cross-origin-resource-policy=on
+      - traefik.http.middlewares.securehello.plugin.superheader.origin-agent-cluster=on
+      - traefik.http.middlewares.securehello.plugin.superheader.x-permitted-cross-domain-policies=on
+      - traefik.http.middlewares.securehello.plugin.superheader.remove-powered-by=on
+
+  whoami:
     image: traefik/whoami
     labels:
       - traefik.enable=true
-      - traefik.http.routers.website.rule=PathPrefix(`/website`)
+      - traefik.http.routers.website.rule=PathPrefix(`/whoami`)
       - traefik.http.routers.website.entrypoints=websecure
       - traefik.http.routers.website.tls=true
-      - traefik.http.routers.website.middlewares=superheader
+      - traefik.http.routers.website.middlewares=securewhoami
+      - traefik.http.middlewares.securewhoami.plugin.superheader.x-frame-options=sameorigin
+      - traefik.http.middlewares.securewhoami.plugin.superheader.x-dns-prefetch-control=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.x-content-type-options=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.strict-transport-security=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.referrer-policy=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.x-xss-protection=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.cross-origin-opener-policy=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.cross-origin-embedder-policy=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.cross-origin-resource-policy=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.origin-agent-cluster=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.x-permitted-cross-domain-policies=off
+      - traefik.http.middlewares.securewhoami.plugin.superheader.remove-powered-by=off

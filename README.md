@@ -47,7 +47,6 @@ middlewares:
         origin-agent-cluster: ?1
         x-permitted-cross-domain-policies: master-only
         remove-powered-by: on
-        remove-server-info: on
 ```
 
 ##### Example 2: Traefik Configuration Using CLI Args
@@ -72,8 +71,7 @@ traefik \
   --http.middlewares.superheader.plugin.superheader.cross-origin-resource-policy=same-origin \
   --http.middlewares.superheader.plugin.superheader.origin-agent-cluster="?1" \
   --http.middlewares.superheader.plugin.superheader.x-permitted-cross-domain-policies=master-only \
-  --http.middlewares.superheader.plugin.superheader.remove-powered-by=on \
-  --http.middlewares.superheader.plugin.superheader.remove-server-info=on
+  --http.middlewares.superheader.plugin.superheader.remove-powered-by=on
 ```
 
 ##### Example 3: Usage in Docker Compose
@@ -141,7 +139,7 @@ a browser should be allowed to render a page in a `<frame>`, `<iframe>`,
 
 The valid values are as follows:
 
-- `deny`: Prevents any domain from framing the content.
+- `deny`: Prevents any domain from framing the content. (Default)
 - `sameorigin`: Allows the same domain to frame the content.
 
 For more information,
@@ -154,7 +152,7 @@ prefetching.
 
 The valid values are as follows:
 
-- `on`: Enables DNS prefetching.
+- `on`: Enables DNS prefetching. (Default)
 - `off`: Disables the setting of the header
 
 For more information,
@@ -167,7 +165,7 @@ the browser to not sniff the MIME type of the content.
 
 The valid values are as follows:
 
-- `nosniff`: Prevents browsers from attempting to infer the MIME type.
+- `on`: Prevents browsers from attempting to infer the MIME type. (Default)
 - `off`: Disables the setting of the header
 
 For more information,
@@ -180,8 +178,7 @@ enforce secure (HTTPS) connections to the server.
 
 The valid values are as follows:
 
-- `max-age=<seconds>; includeSubDomains`: Enforces HTTPS for the specified
-  duration and includes all subdomains.
+- `on`: Enforces HTTPS for the specified duration and includes all subdomains. (Default)
 - `off`: Disables the setting of the header
 
 For more information,
@@ -194,7 +191,7 @@ much referrer information should be included with requests.
 
 The valid values are as follows:
 
-- `no-referrer`: No referrer information is sent.
+- `on` | `no-referrer`: No referrer information is sent. (Default)
 - `no-referrer-when-downgrade`: Referrer is sent for same-origin requests,
   but not for cross-origin requests to HTTP.
 - `origin`: Only the origin is sent as the referrer.
@@ -218,10 +215,10 @@ disable cross-site scripting (XSS) filters built into most modern browsers.
 
 The valid values are as follows:
 
-- `1`: Enables the XSS filter.
-- `1; mode=block`: Enables the XSS filter and blocks the page if an attack
+- `on`: Enables the XSS filter. (Default)
+- `block`: Enables the XSS filter and blocks the page if an attack
   is detected.
-- `0`: Disables the XSS filter.
+- `off`: Disables the XSS filter.
 
 For more information,
 visit: [MDN: X-XSS-Protection](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection)
@@ -234,12 +231,13 @@ contexts (e.g., windows or tabs from other origins).
 
 The valid values are as follows:
 
+- `on` | `same-origin`: Only allows interactions with the same-origin windows.
 - `unsafe-none`: Allows all interactions with other contexts.
 - `same-origin-allow-popups`: Allows same-origin windows to interact with
   the opener, but blocks cross-origin ones.
-- `same-origin`: Only allows interactions with the same-origin windows.
 - `noopener-allow-popups`: Allows interaction with popups, but blocks other
   contexts.
+- `off`: Disables the setting of the header
 
 For more information,
 visit: [MDN: Cross-Origin-Opener-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy)
@@ -251,9 +249,9 @@ to control the resources that can be embedded by a document.
 
 The valid values are as follows:
 
+- `on` | `require-corp`: Requires cross-origin resources to be explicitly marked
+  as permissive. (Default)
 - `unsafe-none`: Allows all cross-origin resources to be embedded.
-- `require-corp`: Requires cross-origin resources to be explicitly marked
-  as permissive.
 - `credentialless`: Requires cross-origin resources to allow for credentials
   to be omitted.
 - `off`: Disables the setting of the header
@@ -268,7 +266,7 @@ to control the cross-origin requests that a resource can make.
 
 The valid values are as follows:
 
-- `same-origin`: Only allows requests from the same origin.
+- `on` | `same-origin`: Only allows requests from the same origin. (Default)
 - `same-site`: Allows requests from the same site.
 - `cross-origin`: Allows all cross-origin requests.
 - `off`: Disables the setting of the header
@@ -283,7 +281,7 @@ for isolating resources by user agent.
 
 The valid values are as follows:
 
-- `?1`: Enables origin agent clustering.
+- `on`: Enables origin agent clustering.
 - `off`: Disables the setting of the header
 
 For more information,

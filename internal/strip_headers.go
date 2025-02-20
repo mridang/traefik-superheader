@@ -1,3 +1,4 @@
+//nolint:cyclop // Suppressing cyclomatic complexity warning
 package internal
 
 import (
