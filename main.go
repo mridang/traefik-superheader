@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/mridang/superheader/internal"
 )
 
 type Middleware struct {
 	next   http.Handler
 	name   string
-	config *Config
+	config *internal.Config
 }
 
-func New(_ context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
+func New(_ context.Context, next http.Handler, config *internal.Config, name string) (http.Handler, error) {
 	return &Middleware{
 		next:   next,
 		name:   name,
@@ -48,14 +50,14 @@ type TimingHeaderWriter struct {
 func (writer *TimingHeaderWriter) WriteHeader(statusCode int) {
 	// Strip headers if needed
 	if writer.stripHeaders {
-		stripHeaders(writer.ResponseWriter)
+		internal.StripHeaders(writer.ResponseWriter)
 	}
 
 	elapsedTime := time.Since(writer.startTime)
 	//nolint:lll // linter rule suppression
 	serverTimingValue := fmt.Sprintf("name=\"traefik\", dur=%.2f, desc=\"Middleware time\"", float64(elapsedTime.Milliseconds()))
 
-	writer.ResponseWriter.Header().Add(ServerTiming, serverTimingValue)
+	writer.ResponseWriter.Header().Add(internal.ServerTiming, serverTimingValue)
 	writer.ResponseWriter.WriteHeader(statusCode)
 }
 
@@ -66,7 +68,7 @@ func (writer *TimingHeaderWriter) WriteHeader(statusCode int) {
 // "Server-Timing".
 func (plugin *Middleware) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	startTime := time.Now()
-	AddSecureHeaders(plugin.config, rw)
+	internal.AddSecureHeaders(plugin.config, rw)
 
 	cw := &TimingHeaderWriter{
 		ResponseWriter: rw,

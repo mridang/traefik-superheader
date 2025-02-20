@@ -1,4 +1,4 @@
-package superheader_test
+package internal_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/mridang/superheader"
+	"github.com/mridang/superheader/internal"
 )
 
 // toDashCase converts a camelCase or PascalCase field name to dash-case.
@@ -60,7 +60,7 @@ func ValidateConfigJSONTags(cfg interface{}) error {
 }
 
 func TestValidateConfigJSONTags(t *testing.T) {
-	err := ValidateConfigJSONTags(superheader.Config{})
+	err := ValidateConfigJSONTags(internal.Config{})
 	if err != nil {
 		t.Errorf("ValidateConfigJSONTags() error = %v", err)
 	}

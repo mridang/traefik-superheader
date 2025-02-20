@@ -1,4 +1,4 @@
-package superheader
+package internal
 
 type Config struct {
 	XFrameOptions                 string `json:"x-frame-options,omitempty"`

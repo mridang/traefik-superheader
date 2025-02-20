@@ -1,4 +1,4 @@
-package superheader
+package internal
 
 const (
 	XFrameOptions                 = "X-Frame-Options"

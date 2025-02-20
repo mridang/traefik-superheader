@@ -1,4 +1,4 @@
-package superheader
+package internal
 
 import (
 	"log"
