@@ -15,7 +15,10 @@ type Middleware struct {
 	config *internal.Config
 }
 
-//goland:noinspection GoExportedElementShouldHaveComment
+// CreateConfig is a function that is required by Traefik to instantiate
+// the configuration.
+//
+//goland:noinspection ALL
 func CreateConfig() *internal.Config {
 	return internal.CreateConfig()
 }
