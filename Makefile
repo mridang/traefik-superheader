@@ -5,6 +5,7 @@ export GO111MODULE=on
 default: lint test
 
 lint:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	golangci-lint run
 
 test:
@@ -20,5 +21,6 @@ clean:
 	rm -rf ./vendor
 
 format:
+	go install golang.org/x/tools/cmd/goimports@latest
 	goimports -w .
 	gofmt -s -w .
