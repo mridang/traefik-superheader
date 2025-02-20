@@ -9,7 +9,7 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "go get",
-        "publishCmd": "make release"
+        "publishCmd": "make lint"
       }
     ],
     [
