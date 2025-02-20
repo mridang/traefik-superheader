@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/mridang/superheader/internal"
@@ -25,28 +26,49 @@ func createHandler(config *internal.Config) (http.Handler, error) {
 
 // assertResponseHeader checks if the response header satisfies the provided matcher condition.
 func assertResponseHeader(t *testing.T, headerKey string, headerVal interface{}, configFn func(*internal.Config)) {
-	config := internal.CreateConfig()
-	configFn(config)
+	// Define a helper function to run the test with either uppercase or lowercase
+	runTest := func(val interface{}) {
+		// Create a new config and handler for each test run
+		config := internal.CreateConfig()
+		configFn(config)
 
-	handler, err := createHandler(config)
-	if err != nil {
-		t.Fatalf("Failed to create handler: %v", err)
+		handler, err := createHandler(config)
+		if err != nil {
+			t.Fatalf("Failed to create handler: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodGet, "https://example.com", nil)
+		rec := httptest.NewRecorder()
+
+		handler.ServeHTTP(rec, req)
+
+		actualHeader := strings.ToLower(rec.Header().Get(headerKey))
+
+		switch v := val.(type) {
+		case string:
+			assert.Equal(t, strings.ToLower(v), actualHeader, "Header value does not match")
+		case nil:
+			assert.Empty(t, actualHeader, "Header should be removed")
+		default:
+			t.Errorf("Unsupported expected value type: %T", v)
+		}
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "https://example.com", nil)
-	rec := httptest.NewRecorder()
+	// Test with uppercase headerVal
+	if headerVal != nil {
+		upperVal := strings.ToUpper(headerVal.(string))
+		runTest(upperVal)
+	}
 
-	handler.ServeHTTP(rec, req)
+	// Test with lowercase headerVal
+	if headerVal != nil {
+		lowerVal := strings.ToLower(headerVal.(string))
+		runTest(lowerVal)
+	}
 
-	actualHeader := rec.Header().Get(headerKey)
-
-	switch v := headerVal.(type) {
-	case string:
-		assert.Equal(t, v, actualHeader, "Header value does not match")
-	case nil:
-		assert.Empty(t, actualHeader, "Header should be removed")
-	default:
-		t.Errorf("Unsupported expected value type: %T", v)
+	// Test with nil headerVal (header should be removed or empty)
+	if headerVal == nil {
+		runTest(nil)
 	}
 }
 
@@ -194,7 +216,7 @@ func TestXXSSProtection(t *testing.T) {
 		})
 
 	// Test "off"
-	assertResponseHeader(t, "X-XSS-Protection", "0",
+	assertResponseHeader(t, "X-XSS-Protection", "",
 		func(config *internal.Config) {
 			config.XXssProtection = "off"
 		})

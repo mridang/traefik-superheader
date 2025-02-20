@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-// stripHeaders removes a predefined list of sensitive HTTP headers to help prevent
+// StripHeaders removes a predefined list of sensitive HTTP headers to help prevent
 // information disclosure as part of the best practices outlined by OWASP. This ensures
 // that headers which might leak unnecessary details about the server or environment
 // are stripped from the response before being sent to the client.

@@ -17,17 +17,17 @@ type Config struct {
 
 func CreateConfig() *Config {
 	return &Config{
-		CrossOriginOpenerPolicy:       "unsafe-none",
+		XFrameOptions:                 "DENY",
+		XDnsPrefetchControl:           "on",
+		XContentTypeOptions:           "on",
+		StrictTransportSecurity:       "on",
+		ReferrerPolicy:                "on",
+		XXssProtection:                "on",
+		CrossOriginOpenerPolicy:       "same-origin",
+		CrossOriginEmbedderPolicy:     "require-corp",
 		CrossOriginResourcePolicy:     "same-origin",
 		OriginAgentCluster:            "on",
-		ReferrerPolicy:                "off",
-		StrictTransportSecurity:       "off",
-		XContentTypeOptions:           "on",
-		XDnsPrefetchControl:           "on",
-		XFrameOptions:                 "SAMEORIGIN",
-		XXssProtection:                "on",
-		XPermittedCrossDomainPolicies: "none",
-		CrossOriginEmbedderPolicy:     "unsafe-none",
+		XPermittedCrossDomainPolicies: "on",
 		RemovePoweredBy:               "on",
 	}
 }

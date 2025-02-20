@@ -14,6 +14,9 @@ func LogMessage(headerKey string, headerValue string) {
 func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	switch config.XFrameOptions {
 	case
+		Enabled:
+		rw.Header().Set(XFrameOptions, "deny")
+	case
 		"DENY",
 		"SAMEORIGIN":
 		rw.Header().Set(XFrameOptions, config.XFrameOptions)
@@ -58,6 +61,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// Referrer-Policy
 	switch config.ReferrerPolicy {
 	case
+		Enabled,
 		"no-referrer",
 		"no-referrer-when-downgrade",
 		"origin",
@@ -84,13 +88,15 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		rw.Header().Set(XXssProtection, "1; mode=block")
 	case
 		Disabled:
-		rw.Header().Set(XXssProtection, "0")
+		// Skip setting the header
 	default:
 		LogMessage(XXssProtection, config.XXssProtection)
 	}
 
 	// Cross-Origin-Opener-Policy
 	switch config.CrossOriginOpenerPolicy {
+	case Enabled:
+		rw.Header().Set(CrossOriginOpenerPolicy, "same-origin")
 	case
 		"unsafe-none",
 		"same-origin-allow-popups",
@@ -106,6 +112,8 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 
 	// Cross-Origin-Embedder-Policy
 	switch config.CrossOriginEmbedderPolicy {
+	case Enabled:
+		rw.Header().Set(CrossOriginEmbedderPolicy, "require-corp")
 	case
 		"unsafe-none",
 		"require-corp",
@@ -119,6 +127,8 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	switch config.CrossOriginResourcePolicy {
+	case Enabled:
+		rw.Header().Set(CrossOriginResourcePolicy, "same-origin")
 	case
 		"same-origin",
 		"same-site",
@@ -143,6 +153,9 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	switch config.XPermittedCrossDomainPolicies {
+	case
+		Enabled:
+		rw.Header().Set(XPermittedCrossDomainPolicies, "none")
 	case
 		"none",
 		"master-only",
