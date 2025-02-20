@@ -17,15 +17,15 @@ type Config struct {
 
 func CreateConfig() *Config {
 	return &Config{
-		XFrameOptions:                 "DENY",
+		XFrameOptions:                 "on",
 		XDnsPrefetchControl:           "on",
 		XContentTypeOptions:           "on",
 		StrictTransportSecurity:       "on",
 		ReferrerPolicy:                "on",
 		XXssProtection:                "on",
-		CrossOriginOpenerPolicy:       "same-origin",
-		CrossOriginEmbedderPolicy:     "require-corp",
-		CrossOriginResourcePolicy:     "same-origin",
+		CrossOriginOpenerPolicy:       "on",
+		CrossOriginEmbedderPolicy:     "on",
+		CrossOriginResourcePolicy:     "on",
 		OriginAgentCluster:            "on",
 		XPermittedCrossDomainPolicies: "on",
 		RemovePoweredBy:               "on",

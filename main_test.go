@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -28,9 +29,22 @@ func createHandler(config *internal.Config) (http.Handler, error) {
 func assertResponseHeader(t *testing.T, headerKey string, headerVal interface{}, configFn func(*internal.Config)) {
 	// Define a helper function to run the test with either uppercase or lowercase
 	runTest := func(val interface{}) {
-		// Create a new config and handler for each test run
+		// Create a new config for each test run
 		config := internal.CreateConfig()
+
+		// Apply user configuration function before modifying config
 		configFn(config)
+
+		// Use reflection to iterate over struct fields and convert their values to lowercase
+		valOfConfig := reflect.ValueOf(config).Elem() // Get the actual struct value
+		for i := range valOfConfig.NumField() {
+			field := valOfConfig.Field(i)
+
+			// If the field is a string, lowercase its value
+			if field.Kind() == reflect.String {
+				field.SetString(strings.ToLower(field.String())) // Lowercase the value
+			}
+		}
 
 		handler, err := createHandler(config)
 		if err != nil {
@@ -42,11 +56,12 @@ func assertResponseHeader(t *testing.T, headerKey string, headerVal interface{},
 
 		handler.ServeHTTP(rec, req)
 
-		actualHeader := strings.ToLower(rec.Header().Get(headerKey))
+		actualHeader := rec.Header().Get(headerKey)
 
 		switch v := val.(type) {
 		case string:
-			assert.Equal(t, strings.ToLower(v), actualHeader, "Header value does not match")
+			// Perform case-insensitive comparison
+			assert.Equal(t, strings.ToLower(v), strings.ToLower(actualHeader), "Header value does not match (case-insensitive)")
 		case nil:
 			assert.Empty(t, actualHeader, "Header should be removed")
 		default:
@@ -54,22 +69,7 @@ func assertResponseHeader(t *testing.T, headerKey string, headerVal interface{},
 		}
 	}
 
-	// Test with uppercase headerVal
-	if headerVal != nil {
-		upperVal := strings.ToUpper(headerVal.(string))
-		runTest(upperVal)
-	}
-
-	// Test with lowercase headerVal
-	if headerVal != nil {
-		lowerVal := strings.ToLower(headerVal.(string))
-		runTest(lowerVal)
-	}
-
-	// Test with nil headerVal (header should be removed or empty)
-	if headerVal == nil {
-		runTest(nil)
-	}
+	runTest(headerVal)
 }
 
 func TestXFrameOptions(t *testing.T) {

@@ -3,6 +3,7 @@ package internal
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 func LogMessage(headerKey string, headerValue string) {
@@ -12,20 +13,20 @@ func LogMessage(headerKey string, headerValue string) {
 
 //nolint:cyclop,funlen // Suppressing cyclomatic complexity warning
 func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
-	switch config.XFrameOptions {
+	switch strings.ToLower(config.XFrameOptions) {
 	case
 		Enabled:
 		rw.Header().Set(XFrameOptions, "deny")
 	case
-		"DENY",
-		"SAMEORIGIN":
+		"deny",
+		"sameorigin":
 		rw.Header().Set(XFrameOptions, config.XFrameOptions)
 	default:
 		LogMessage(XFrameOptions, config.XFrameOptions)
 	}
 
 	// X-DNS-Prefetch-Control
-	switch config.XDnsPrefetchControl {
+	switch strings.ToLower(config.XDnsPrefetchControl) {
 	case
 		Enabled,
 		Disabled:
@@ -35,7 +36,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// X-Content-Type-Options
-	switch config.XContentTypeOptions {
+	switch strings.ToLower(config.XContentTypeOptions) {
 	case
 		Enabled:
 		rw.Header().Set(XContentTypeOptions, "nosniff")
@@ -47,7 +48,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// Strict-Transport-Security
-	switch config.StrictTransportSecurity {
+	switch strings.ToLower(config.StrictTransportSecurity) {
 	case
 		Enabled:
 		rw.Header().Set(StrictTransportSecurity, "max-age=31536000; includeSubDomains")
@@ -59,7 +60,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// Referrer-Policy
-	switch config.ReferrerPolicy {
+	switch strings.ToLower(config.ReferrerPolicy) {
 	case
 		Enabled,
 		"no-referrer",
@@ -79,7 +80,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// X-XSS-Protection
-	switch config.XXssProtection {
+	switch strings.ToLower(config.XXssProtection) {
 	case
 		Enabled:
 		rw.Header().Set(XXssProtection, "1")
@@ -94,7 +95,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// Cross-Origin-Opener-Policy
-	switch config.CrossOriginOpenerPolicy {
+	switch strings.ToLower(config.CrossOriginOpenerPolicy) {
 	case Enabled:
 		rw.Header().Set(CrossOriginOpenerPolicy, "same-origin")
 	case
@@ -111,7 +112,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	}
 
 	// Cross-Origin-Embedder-Policy
-	switch config.CrossOriginEmbedderPolicy {
+	switch strings.ToLower(config.CrossOriginEmbedderPolicy) {
 	case Enabled:
 		rw.Header().Set(CrossOriginEmbedderPolicy, "require-corp")
 	case
@@ -126,7 +127,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		LogMessage(CrossOriginEmbedderPolicy, config.CrossOriginEmbedderPolicy)
 	}
 
-	switch config.CrossOriginResourcePolicy {
+	switch strings.ToLower(config.CrossOriginResourcePolicy) {
 	case Enabled:
 		rw.Header().Set(CrossOriginResourcePolicy, "same-origin")
 	case
@@ -141,7 +142,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		LogMessage(CrossOriginResourcePolicy, config.CrossOriginResourcePolicy)
 	}
 
-	switch config.OriginAgentCluster {
+	switch strings.ToLower(config.OriginAgentCluster) {
 	case
 		Enabled:
 		rw.Header().Set(OriginAgentCluster, "?1")
@@ -152,7 +153,7 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 		LogMessage(OriginAgentCluster, config.OriginAgentCluster)
 	}
 
-	switch config.XPermittedCrossDomainPolicies {
+	switch strings.ToLower(config.XPermittedCrossDomainPolicies) {
 	case
 		Enabled:
 		rw.Header().Set(XPermittedCrossDomainPolicies, "none")
