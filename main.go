@@ -15,6 +15,11 @@ type Middleware struct {
 	config *internal.Config
 }
 
+//goland:noinspection GoExportedElementShouldHaveComment
+func CreateConfig() *internal.Config {
+	return internal.CreateConfig()
+}
+
 func New(_ context.Context, next http.Handler, config *internal.Config, name string) (http.Handler, error) {
 	return &Middleware{
 		next:   next,
