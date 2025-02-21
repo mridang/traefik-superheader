@@ -3,25 +3,22 @@ services:
     image: traefik:3.3.3
     ports:
       - "7080:80"
-      - "7081:443"
     command:
       - --api.dashboard=false
       - --api.insecure=false
       - --log.level=DEBUG
-      - --experimental.localPlugins.superheader.moduleName=mridang/traefik-superheader
+      - --experimental.localPlugins.superheader.moduleName=github.com/mridang/traefik-superheader
       - --providers.docker=true
       - --entrypoints.http.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.websecure.http.tls=true
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-      - '.:/plugins-local/src/mridang/traefik-superheader'
+      - '.:/plugins-local/src/github.com/mridang/traefik-superheader'
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.superheader.plugin.superheader=true
 
-  hello: # https://localhost:7081/hello/
+  hello: # http://localhost:7080/hello/
     image: testcontainers/helloworld
     expose:
       - "8080"
@@ -30,8 +27,7 @@ services:
       - traefik.http.routers.hello.rule=PathPrefix(`/hello`)
       - traefik.http.middlewares.strip-hello-prefix.stripprefix.prefixes=/hello
       - traefik.http.routers.hello.middlewares=strip-hello-prefix
-      - traefik.http.routers.hello.entrypoints=websecure
-      - traefik.http.routers.hello.tls=true
+      - traefik.http.routers.hello.entrypoints=http
       - traefik.http.services.hello.loadbalancer.server.port=8080
       - traefik.http.middlewares.securehello.plugin.superheader.x-frame-options=DENY
       - traefik.http.middlewares.securehello.plugin.superheader.x-dns-prefetch-control=on
@@ -46,13 +42,12 @@ services:
       - traefik.http.middlewares.securehello.plugin.superheader.x-permitted-cross-domain-policies=on
       - traefik.http.middlewares.securehello.plugin.superheader.remove-powered-by=on
 
-  whoami: # https://localhost:7081/whoami/
+  whoami: # http://localhost:7080/whoami/
     image: traefik/whoami
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)
-      - traefik.http.routers.whoami.entrypoints=websecure
-      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.entrypoints=http
       - traefik.http.routers.whoami.middlewares=securewhoami
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-frame-options=sameorigin
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-dns-prefetch-control=off
