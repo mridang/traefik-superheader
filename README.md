@@ -90,7 +90,7 @@ services:
       - --providers.docker=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --experimental.plugins.superheader.moduleName=github.com/mridang/superheader
+      - --experimental.plugins.superheader.moduleName=mridang/traefik-superheader
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
     labels:

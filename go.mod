@@ -1,4 +1,4 @@
-module github.com/mridang/superheader
+module mridang/traefik-superheader
 
 go 1.23
 

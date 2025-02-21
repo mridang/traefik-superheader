@@ -8,14 +8,14 @@ services:
       - --api.dashboard=false
       - --api.insecure=false
       - --log.level=DEBUG
-      - --experimental.localPlugins.superheader.moduleName=github.com/mridang/superheader
+      - --experimental.localPlugins.superheader.moduleName=mridang/traefik-superheader
       - --providers.docker=true
       - --entrypoints.http.address=:80
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-      - '.:/plugins-local/src/github.com/mridang/superheader'
+      - '.:/plugins-local/src/mridang/traefik-superheader'
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080

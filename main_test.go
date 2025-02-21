@@ -1,4 +1,4 @@
-package superheader_test
+package traefik_superheader_test
 
 import (
 	"context"
@@ -8,9 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mridang/superheader/internal"
+	"mridang/traefik-superheader/internal"
 
-	"github.com/mridang/superheader"
+	superheader "mridang/traefik-superheader"
+
 	"github.com/stretchr/testify/assert"
 )
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/mridang/superheader/internal"
+	"mridang/traefik-superheader/internal"
 )
 
 // toDashCase converts a camelCase or PascalCase field name to dash-case.

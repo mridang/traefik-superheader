@@ -1,4 +1,5 @@
-package superheader
+//nolint:revive,stylecheck // traefik needs this
+package traefik_superheader
 
 import (
 	"context"
@@ -6,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mridang/superheader/internal"
+	"mridang/traefik-superheader/internal"
 )
 
 type Middleware struct {
