@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"mridang/traefik-superheader/internal"
+	"github.com/mridang/traefik-superheader/internal"
 )
 
 type Middleware struct {

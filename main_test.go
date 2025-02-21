@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"mridang/traefik-superheader/internal"
+	"github.com/mridang/traefik-superheader/internal"
 
-	superheader "mridang/traefik-superheader"
+	superheader "github.com/mridang/traefik-superheader"
 
 	"github.com/stretchr/testify/assert"
 )
