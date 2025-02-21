@@ -3,8 +3,14 @@
 **Superheader** is a plugin for Traefik that adds the necessary headers
 to responses to help secure web applications.
 
-The headers set are adhere to the recommendations of the OWASP Secure Headers Project
-https://owasp.org/www-project-secure-headers/
+The headers set are adhere to the recommendations of the OWASP Secure Headers 
+Project https://owasp.org/www-project-secure-headers/
+
+##### Why ?
+
+While there is third-party middleware for almost all frameworks e.g. Helmet for
+Express (Node) and Spring Security for Spring (Java), using this
+middleware make it simple to secure all your web applications.
 
 ## Usage
 
@@ -124,6 +130,9 @@ services:
       - traefik.http.routers.baz.rule=PathPrefix(`/baz`)
       - traefik.http.routers.baz.entrypoints=web
 ```
+
+Once the middleware has been installed, you can test the security of your web
+application using the test suite on MDN https://observatory.mozilla.org/
 
 ### Options
 
