@@ -62,7 +62,9 @@ func AddSecureHeaders(config *Config, rw http.ResponseWriter) {
 	// Referrer-Policy
 	switch strings.ToLower(config.ReferrerPolicy) {
 	case
-		Enabled,
+		Enabled:
+		rw.Header().Set(ReferrerPolicy, "no-referrer")
+	case
 		"no-referrer",
 		"no-referrer-when-downgrade",
 		"origin",
