@@ -9,7 +9,7 @@ services:
       - --log.level=DEBUG
       - --experimental.localPlugins.superheader.moduleName=github.com/mridang/traefik-superheader
       - --providers.docker=true
-      - --entrypoints.http.address=:80
+      - --entrypoints.web.address=:80
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - '.:/plugins-local/src/github.com/mridang/traefik-superheader'
@@ -27,7 +27,7 @@ services:
       - traefik.http.routers.hello.rule=PathPrefix(`/hello`)
       - traefik.http.middlewares.strip-hello-prefix.stripprefix.prefixes=/hello
       - traefik.http.routers.hello.middlewares=strip-hello-prefix
-      - traefik.http.routers.hello.entrypoints=http
+      - traefik.http.routers.hello.entrypoints=web
       - traefik.http.services.hello.loadbalancer.server.port=8080
       - traefik.http.middlewares.securehello.plugin.superheader.x-frame-options=DENY
       - traefik.http.middlewares.securehello.plugin.superheader.x-dns-prefetch-control=on
@@ -47,7 +47,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)
-      - traefik.http.routers.whoami.entrypoints=http
+      - traefik.http.routers.whoami.entrypoints=web
       - traefik.http.routers.whoami.middlewares=securewhoami
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-frame-options=sameorigin
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-dns-prefetch-control=off

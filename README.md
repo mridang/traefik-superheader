@@ -88,15 +88,13 @@ services:
     image: traefik:3.3.3
     ports:
       - "7080:80"
-      - "9080:8080"
     command:
       - --api.dashboard=false
       - --api.insecure=false
       - --log.level=DEBUG
+      - --experimental.plugins.superheader.moduleName=github.com/mridang/traefik-superheader
       - --providers.docker=true
       - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --experimental.plugins.superheader.moduleName=mridang/traefik-superheader
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
     labels:
@@ -109,8 +107,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.foo.rule=PathPrefix(`/foo`)
-      - traefik.http.routers.foo.middlewares=superheader
-      - traefik.http.routers.foo.entrypoints=websecure
+      - traefik.http.routers.foo.middlewares=securefoo
+      - traefik.http.middlewares.securefoo.plugin.superheader=true
+      - traefik.http.routers.foo.entrypoints=web
 
   # A sample service that uses the middleware with custom options
   bar:
@@ -118,9 +117,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.bar.rule=PathPrefix(`/bar`)
-      - traefik.http.routers.bar.middlewares=superheader
-      - traefik.http.middlewares.superheader.plugin.superheader.x-frame-options="DENY"
-      - traefik.http.routers.bar.entrypoints=websecure
+      - traefik.http.routers.bar.middlewares=securebar
+      - traefik.http.middlewares.securebar.plugin.superheader.x-frame-options="DENY"
+      - traefik.http.routers.bar.entrypoints=web
 
   # A sample service that does not use the middleware at all
   baz:
