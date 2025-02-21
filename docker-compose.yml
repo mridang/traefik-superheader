@@ -21,14 +21,18 @@ services:
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.superheader.plugin.superheader=true
 
-  hello:
+  hello: # https://localhost:7081/hello/
     image: testcontainers/helloworld
+    expose:
+      - "8080"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.website.rule=PathPrefix(`/hello`)
-      - traefik.http.routers.website.entrypoints=websecure
-      - traefik.http.routers.website.tls=true
-      - traefik.http.routers.website.middlewares=securehello
+      - traefik.http.routers.hello.rule=PathPrefix(`/hello`)
+      - traefik.http.middlewares.strip-hello-prefix.stripprefix.prefixes=/hello
+      - traefik.http.routers.hello.middlewares=strip-hello-prefix
+      - traefik.http.routers.hello.entrypoints=websecure
+      - traefik.http.routers.hello.tls=true
+      - traefik.http.services.hello.loadbalancer.server.port=8080
       - traefik.http.middlewares.securehello.plugin.superheader.x-frame-options=DENY
       - traefik.http.middlewares.securehello.plugin.superheader.x-dns-prefetch-control=on
       - traefik.http.middlewares.securehello.plugin.superheader.x-content-type-options=on
@@ -42,14 +46,14 @@ services:
       - traefik.http.middlewares.securehello.plugin.superheader.x-permitted-cross-domain-policies=on
       - traefik.http.middlewares.securehello.plugin.superheader.remove-powered-by=on
 
-  whoami:
+  whoami: # https://localhost:7081/whoami/
     image: traefik/whoami
     labels:
       - traefik.enable=true
-      - traefik.http.routers.website.rule=PathPrefix(`/whoami`)
-      - traefik.http.routers.website.entrypoints=websecure
-      - traefik.http.routers.website.tls=true
-      - traefik.http.routers.website.middlewares=securewhoami
+      - traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)
+      - traefik.http.routers.whoami.entrypoints=websecure
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.middlewares=securewhoami
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-frame-options=sameorigin
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-dns-prefetch-control=off
       - traefik.http.middlewares.securewhoami.plugin.superheader.x-content-type-options=off
