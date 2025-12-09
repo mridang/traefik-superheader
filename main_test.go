@@ -1,383 +1,259 @@
-package traefik_superheader_test
+package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
+	"os"
 	"strings"
 	"testing"
 
+	"github.com/http-wasm/http-wasm-host-go/api"
+	"github.com/http-wasm/http-wasm-host-go/handler"
+	wasmhttp "github.com/http-wasm/http-wasm-host-go/handler/nethttp"
 	"github.com/mridang/traefik-superheader/internal"
-
-	superheader "github.com/mridang/traefik-superheader"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/tetratelabs/wazero"
 )
 
-// createHandler creates the handler with the given configuration.
-func createHandler(config *internal.Config) (http.Handler, error) {
-	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+func loadWasm(t *testing.T) []byte {
+	runPluginBuild(t)
+
+	path := "build/plugin.wasm"
+
+	stat, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		if _, err2 := os.Stat("plugin.wasm"); err2 == nil {
+			path = "plugin.wasm"
+			stat, _ = os.Stat(path)
+		} else {
+			t.Fatalf("plugin.wasm not found")
+		}
+	}
+
+	if stat.Size() == 0 {
+		t.Fatalf("plugin.wasm is empty")
+	}
+
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("failed to read wasm: %v", err)
+	}
+
+	return b
+}
+
+func createHandler(t *testing.T, config *internal.Config) (http.Handler, error) {
+	mock := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Server", "Go")
 		w.Header().Set("X-Powered-By", "Go")
 		w.WriteHeader(http.StatusOK)
 	})
 
-	return superheader.New(context.Background(), mockHandler, config, "test")
-}
+	wasm := loadWasm(t)
 
-// assertResponseHeader checks if the response header satisfies the provided matcher condition.
-func assertResponseHeader(t *testing.T, headerKey string, headerVal interface{}, configFn func(*internal.Config)) {
-	// Define a helper function to run the test with either uppercase or lowercase
-	runTest := func(val interface{}) {
-		// Create a new config for each test run
-		config := internal.CreateConfig()
-
-		// Apply user configuration function before modifying config
-		configFn(config)
-
-		// Use reflection to iterate over struct fields and convert their values to lowercase
-		valOfConfig := reflect.ValueOf(config).Elem() // Get the actual struct value
-		for i := range valOfConfig.NumField() {
-			field := valOfConfig.Field(i)
-
-			// If the field is a string, lowercase its value
-			if field.Kind() == reflect.String {
-				field.SetString(strings.ToLower(field.String())) // Lowercase the value
-			}
-		}
-
-		handler, err := createHandler(config)
-		if err != nil {
-			t.Fatalf("Failed to create handler: %v", err)
-		}
-
-		req := httptest.NewRequest(http.MethodGet, "https://example.com", nil)
-		rec := httptest.NewRecorder()
-
-		handler.ServeHTTP(rec, req)
-
-		actualHeader := rec.Header().Get(headerKey)
-
-		switch v := val.(type) {
-		case string:
-			// Perform case-insensitive comparison
-			assert.Equal(t, strings.ToLower(v), strings.ToLower(actualHeader), "Header value does not match (case-insensitive)")
-		case nil:
-			assert.Empty(t, actualHeader, "Header should be removed")
-		default:
-			t.Errorf("Unsupported expected value type: %T", v)
-		}
+	cfg, err := json.Marshal(config)
+	if err != nil {
+		return nil, err
 	}
 
-	runTest(headerVal)
+	ctx := context.Background()
+
+	mw, err := wasmhttp.NewMiddleware(ctx, wasm,
+		handler.GuestConfig(cfg),
+		handler.Logger(api.ConsoleLogger{}),
+		handler.ModuleConfig(wazero.NewModuleConfig()),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	t.Cleanup(func() {
+		require.NoError(t, mw.Close(ctx))
+	})
+
+	return mw.NewHandler(ctx, mock), nil
+}
+
+func assertResponseHeader(t *testing.T, key string, expected interface{}, configure func(*internal.Config)) {
+	config := &internal.Config{}
+	config.SetDefaults()
+	configure(config)
+
+	h, err := createHandler(t, config)
+	if err != nil {
+		t.Fatalf("handler creation failed: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "https://example.com", nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+
+	actual := rec.Header().Get(key)
+
+	switch v := expected.(type) {
+	case string:
+		assert.Equal(t, strings.ToLower(v), strings.ToLower(actual))
+	case nil:
+		assert.Empty(t, actual)
+	}
 }
 
 func TestXFrameOptions(t *testing.T) {
-	// Test "DENY"
-	assertResponseHeader(t, "X-Frame-Options", "DENY",
-		func(config *internal.Config) {
-			config.XFrameOptions = "DENY"
-		})
-
-	// Test "SAMEORIGIN"
-	assertResponseHeader(t, "X-Frame-Options", "SAMEORIGIN",
-		func(config *internal.Config) {
-			config.XFrameOptions = "SAMEORIGIN"
-		})
-
-	// Test invalid value (header should not be set)
-	assertResponseHeader(t, "X-Frame-Options", nil,
-		func(config *internal.Config) {
-			config.XFrameOptions = "invalid"
-		})
+	assertResponseHeader(t, "X-Frame-Options", "DENY", func(c *internal.Config) {
+		c.XFrameOptions = "DENY"
+	})
+	assertResponseHeader(t, "X-Frame-Options", "SAMEORIGIN", func(c *internal.Config) {
+		c.XFrameOptions = "SAMEORIGIN"
+	})
+	assertResponseHeader(t, "X-Frame-Options", nil, func(c *internal.Config) {
+		c.XFrameOptions = "invalid"
+	})
 }
 
 func TestXDNSPrefetchControl(t *testing.T) {
-	// Test "on"
-	assertResponseHeader(t, "X-DNS-Prefetch-Control", "on",
-		func(config *internal.Config) {
-			config.XDnsPrefetchControl = "on"
-		})
-
-	// Test "off"
-	assertResponseHeader(t, "X-DNS-Prefetch-Control", "off",
-		func(config *internal.Config) {
-			config.XDnsPrefetchControl = "off"
-		})
-
-	// Test invalid value (header should not be set)
-	assertResponseHeader(t, "X-DNS-Prefetch-Control", nil,
-		func(config *internal.Config) {
-			config.XDnsPrefetchControl = "invalid"
-		})
+	assertResponseHeader(t, "X-DNS-Prefetch-Control", "on", func(c *internal.Config) {
+		c.XDnsPrefetchControl = "on"
+	})
+	assertResponseHeader(t, "X-DNS-Prefetch-Control", "off", func(c *internal.Config) {
+		c.XDnsPrefetchControl = "off"
+	})
+	assertResponseHeader(t, "X-DNS-Prefetch-Control", nil, func(c *internal.Config) {
+		c.XDnsPrefetchControl = "invalid"
+	})
 }
 
 func TestXContentTypeOptions(t *testing.T) {
-	// Test "on"
-	assertResponseHeader(t, "X-Content-Type-Options", "nosniff",
-		func(config *internal.Config) {
-			config.XContentTypeOptions = "on"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "X-Content-Type-Options", nil,
-		func(config *internal.Config) {
-			config.XContentTypeOptions = "off"
-		})
-
-	// Test invalid value (header should not be set)
-	assertResponseHeader(t, "X-Content-Type-Options", nil,
-		func(config *internal.Config) {
-			config.XContentTypeOptions = "invalid"
-		})
+	assertResponseHeader(t, "X-Content-Type-Options", "nosniff", func(c *internal.Config) {
+		c.XContentTypeOptions = "on"
+	})
+	assertResponseHeader(t, "X-Content-Type-Options", nil, func(c *internal.Config) {
+		c.XContentTypeOptions = "off"
+	})
+	assertResponseHeader(t, "X-Content-Type-Options", nil, func(c *internal.Config) {
+		c.XContentTypeOptions = "invalid"
+	})
 }
 
 func TestStrictTransportSecurity(t *testing.T) {
-	// Test "on"
-	assertResponseHeader(t, "Strict-Transport-Security", "max-age=31536000; includeSubDomains",
-		func(config *internal.Config) {
-			config.StrictTransportSecurity = "on"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Strict-Transport-Security", nil,
-		func(config *internal.Config) {
-			config.StrictTransportSecurity = "off"
-		})
+	assertResponseHeader(t, "Strict-Transport-Security", "max-age=31536000; includeSubDomains", func(c *internal.Config) {
+		c.StrictTransportSecurity = "on"
+	})
+	assertResponseHeader(t, "Strict-Transport-Security", nil, func(c *internal.Config) {
+		c.StrictTransportSecurity = "off"
+	})
 }
 
 func TestReferrerPolicy(t *testing.T) {
-	// Test "no-referrer"
-	assertResponseHeader(t, "Referrer-Policy", "no-referrer",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "no-referrer"
-		})
+	policies := []string{
+		"no-referrer", "no-referrer-when-downgrade", "origin",
+		"origin-when-cross-origin", "same-origin", "strict-origin",
+		"strict-origin-when-cross-origin", "unsafe-url",
+	}
 
-	// Test "no-referrer-when-downgrade"
-	assertResponseHeader(t, "Referrer-Policy", "no-referrer-when-downgrade",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "no-referrer-when-downgrade"
+	for _, p := range policies {
+		val := p
+		assertResponseHeader(t, "Referrer-Policy", p, func(c *internal.Config) {
+			c.ReferrerPolicy = val
 		})
+	}
 
-	// Test "origin"
-	assertResponseHeader(t, "Referrer-Policy", "origin",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "origin"
-		})
-
-	// Test "origin-when-cross-origin"
-	assertResponseHeader(t, "Referrer-Policy", "origin-when-cross-origin",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "origin-when-cross-origin"
-		})
-
-	// Test "same-origin"
-	assertResponseHeader(t, "Referrer-Policy", "same-origin",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "same-origin"
-		})
-
-	// Test "strict-origin"
-	assertResponseHeader(t, "Referrer-Policy", "strict-origin",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "strict-origin"
-		})
-
-	// Test "strict-origin-when-cross-origin"
-	assertResponseHeader(t, "Referrer-Policy", "strict-origin-when-cross-origin",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "strict-origin-when-cross-origin"
-		})
-
-	// Test "unsafe-url"
-	assertResponseHeader(t, "Referrer-Policy", "unsafe-url",
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "unsafe-url"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Referrer-Policy", nil,
-		func(config *internal.Config) {
-			config.ReferrerPolicy = "off"
-		})
+	assertResponseHeader(t, "Referrer-Policy", nil, func(c *internal.Config) {
+		c.ReferrerPolicy = "off"
+	})
 }
 
 func TestXXSSProtection(t *testing.T) {
-	// Test "on"
-	assertResponseHeader(t, "X-XSS-Protection", "1",
-		func(config *internal.Config) {
-			config.XXssProtection = "on"
-		})
-
-	// Test "block"
-	assertResponseHeader(t, "X-XSS-Protection", "1; mode=block",
-		func(config *internal.Config) {
-			config.XXssProtection = "block"
-		})
-
-	// Test "off"
-	assertResponseHeader(t, "X-XSS-Protection", "",
-		func(config *internal.Config) {
-			config.XXssProtection = "off"
-		})
+	assertResponseHeader(t, "X-XSS-Protection", "1", func(c *internal.Config) {
+		c.XXssProtection = "on"
+	})
+	assertResponseHeader(t, "X-XSS-Protection", "1; mode=block", func(c *internal.Config) {
+		c.XXssProtection = "block"
+	})
+	assertResponseHeader(t, "X-XSS-Protection", "", func(c *internal.Config) {
+		c.XXssProtection = "off"
+	})
 }
 
 func TestCrossOriginOpenerPolicy(t *testing.T) {
-	// Test "unsafe-none"
-	assertResponseHeader(t, "Cross-Origin-Opener-Policy", "unsafe-none",
-		func(config *internal.Config) {
-			config.CrossOriginOpenerPolicy = "unsafe-none"
-		})
+	policies := []string{"unsafe-none", "same-origin-allow-popups", "same-origin", "noopener-allow-popups"}
 
-	// Test "same-origin-allow-popups"
-	assertResponseHeader(t, "Cross-Origin-Opener-Policy", "same-origin-allow-popups",
-		func(config *internal.Config) {
-			config.CrossOriginOpenerPolicy = "same-origin-allow-popups"
+	for _, p := range policies {
+		val := p
+		assertResponseHeader(t, "Cross-Origin-Opener-Policy", p, func(c *internal.Config) {
+			c.CrossOriginOpenerPolicy = val
 		})
+	}
 
-	// Test "same-origin"
-	assertResponseHeader(t, "Cross-Origin-Opener-Policy", "same-origin",
-		func(config *internal.Config) {
-			config.CrossOriginOpenerPolicy = "same-origin"
-		})
-
-	// Test "noopener-allow-popups"
-	assertResponseHeader(t, "Cross-Origin-Opener-Policy", "noopener-allow-popups",
-		func(config *internal.Config) {
-			config.CrossOriginOpenerPolicy = "noopener-allow-popups"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Cross-Origin-Opener-Policy", nil,
-		func(config *internal.Config) {
-			config.CrossOriginOpenerPolicy = "off"
-		})
+	assertResponseHeader(t, "Cross-Origin-Opener-Policy", nil, func(c *internal.Config) {
+		c.CrossOriginOpenerPolicy = "off"
+	})
 }
 
 func TestCrossOriginEmbedderPolicy(t *testing.T) {
-	// Test "unsafe-none"
-	assertResponseHeader(t, "Cross-Origin-Embedder-Policy", "unsafe-none",
-		func(config *internal.Config) {
-			config.CrossOriginEmbedderPolicy = "unsafe-none"
-		})
+	policies := []string{"unsafe-none", "require-corp", "credentialless"}
 
-	// Test "require-corp"
-	assertResponseHeader(t, "Cross-Origin-Embedder-Policy", "require-corp",
-		func(config *internal.Config) {
-			config.CrossOriginEmbedderPolicy = "require-corp"
+	for _, p := range policies {
+		val := p
+		assertResponseHeader(t, "Cross-Origin-Embedder-Policy", p, func(c *internal.Config) {
+			c.CrossOriginEmbedderPolicy = val
 		})
+	}
 
-	// Test "credentialless"
-	assertResponseHeader(t, "Cross-Origin-Embedder-Policy", "credentialless",
-		func(config *internal.Config) {
-			config.CrossOriginEmbedderPolicy = "credentialless"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Cross-Origin-Embedder-Policy", nil,
-		func(config *internal.Config) {
-			config.CrossOriginEmbedderPolicy = "off"
-		})
+	assertResponseHeader(t, "Cross-Origin-Embedder-Policy", nil, func(c *internal.Config) {
+		c.CrossOriginEmbedderPolicy = "off"
+	})
 }
 
 func TestOriginAgentCluster(t *testing.T) {
-	// Test "on"
-	assertResponseHeader(t, "Origin-Agent-Cluster", "?1",
-		func(config *internal.Config) {
-			config.OriginAgentCluster = "on"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Origin-Agent-Cluster", nil,
-		func(config *internal.Config) {
-			config.OriginAgentCluster = "off"
-		})
+	assertResponseHeader(t, "Origin-Agent-Cluster", "?1", func(c *internal.Config) {
+		c.OriginAgentCluster = "on"
+	})
+	assertResponseHeader(t, "Origin-Agent-Cluster", nil, func(c *internal.Config) {
+		c.OriginAgentCluster = "off"
+	})
 }
 
 func TestCrossOriginResourcePolicy(t *testing.T) {
-	// Test "same-origin"
-	assertResponseHeader(t, "Cross-Origin-Resource-Policy", "same-origin",
-		func(config *internal.Config) {
-			config.CrossOriginResourcePolicy = "same-origin"
-		})
+	policies := []string{"same-origin", "same-site", "cross-origin"}
 
-	// Test "same-site"
-	assertResponseHeader(t, "Cross-Origin-Resource-Policy", "same-site",
-		func(config *internal.Config) {
-			config.CrossOriginResourcePolicy = "same-site"
+	for _, p := range policies {
+		val := p
+		assertResponseHeader(t, "Cross-Origin-Resource-Policy", p, func(c *internal.Config) {
+			c.CrossOriginResourcePolicy = val
 		})
+	}
 
-	// Test "cross-origin"
-	assertResponseHeader(t, "Cross-Origin-Resource-Policy", "cross-origin",
-		func(config *internal.Config) {
-			config.CrossOriginResourcePolicy = "cross-origin"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "Cross-Origin-Resource-Policy", nil,
-		func(config *internal.Config) {
-			config.CrossOriginResourcePolicy = "off"
-		})
+	assertResponseHeader(t, "Cross-Origin-Resource-Policy", nil, func(c *internal.Config) {
+		c.CrossOriginResourcePolicy = "off"
+	})
 }
 
-// TestXPermittedCrossDomainPolicies tests the "X-Permitted-Cross-Domain-Policies" header.
 func TestXPermittedCrossDomainPolicies(t *testing.T) {
-	// Test "none"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "none",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "none"
-		})
+	policies := []string{
+		"none", "master-only", "by-content-type",
+		"by-ftp-filename", "all", "none-this-response",
+	}
 
-	// Test "master-only"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "master-only",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "master-only"
+	for _, p := range policies {
+		val := p
+		assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", p, func(c *internal.Config) {
+			c.XPermittedCrossDomainPolicies = val
 		})
+	}
 
-	// Test "by-content-type"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "by-content-type",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "by-content-type"
-		})
-
-	// Test "by-ftp-filename"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "by-ftp-filename",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "by-ftp-filename"
-		})
-
-	// Test "all"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "all",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "all"
-		})
-
-	// Test "none-this-response"
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", "none-this-response",
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "none-this-response"
-		})
-
-	// Test "off" (header should not be set)
-	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", nil,
-		func(config *internal.Config) {
-			config.XPermittedCrossDomainPolicies = "off"
-		})
+	assertResponseHeader(t, "X-Permitted-Cross-Domain-Policies", nil, func(c *internal.Config) {
+		c.XPermittedCrossDomainPolicies = "off"
+	})
 }
 
-// tests if "X-Powered-By" header is removed when RemovePoweredBy is "on".
 func TestRemovePoweredBy(t *testing.T) {
-	assertResponseHeader(t, "X-Powered-By", nil,
-		func(config *internal.Config) {
-			config.RemovePoweredBy = "on"
-		})
-}
-
-// tests if "Server" header is removed when RemoveServerInfo is "on".
-func TestRemoveServerInfo(t *testing.T) {
-	assertResponseHeader(t, "Server", nil,
-		func(config *internal.Config) {
-			config.RemovePoweredBy = "on"
-		})
+	assertResponseHeader(t, "X-Powered-By", nil, func(c *internal.Config) {
+		c.RemovePoweredBy = "on"
+	})
+	assertResponseHeader(t, "X-Powered-By", "go", func(c *internal.Config) {
+		c.RemovePoweredBy = "off"
+	})
 }

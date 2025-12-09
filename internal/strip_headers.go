@@ -2,7 +2,7 @@
 package internal
 
 import (
-	"net/http"
+	"github.com/http-wasm/http-wasm-guest-tinygo/handler/api"
 )
 
 // StripHeaders removes a predefined list of sensitive HTTP headers to help prevent
@@ -16,7 +16,7 @@ import (
 //
 // This method works in a case-insensitive manner, meaning it will remove headers like
 // "X-Powered-By", "x-powered-by", or any case variation.
-func StripHeaders(rw http.ResponseWriter) {
+func StripHeaders(resp api.Response) {
 	// List of headers to strip
 	headersToRemove := []string{
 		"$wsep",
@@ -91,10 +91,8 @@ func StripHeaders(rw http.ResponseWriter) {
 		"X-ruxit-JS-Agent",
 	}
 
-	// Loop through the list of headers to remove and delete them from the request
+	h := resp.Headers()
 	for _, header := range headersToRemove {
-		rw.Header().Del(header)
+		h.Remove(header)
 	}
-
-	// No need to send a response header. Just return after stripping headers.
 }

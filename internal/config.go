@@ -15,19 +15,43 @@ type Config struct {
 	RemovePoweredBy               string `json:"remove-powered-by,omitempty"`
 }
 
-func CreateConfig() *Config {
-	return &Config{
-		XFrameOptions:                 "on",
-		XDnsPrefetchControl:           "on",
-		XContentTypeOptions:           "on",
-		StrictTransportSecurity:       "on",
-		ReferrerPolicy:                "on",
-		XXssProtection:                "on",
-		CrossOriginOpenerPolicy:       "on",
-		CrossOriginEmbedderPolicy:     "on",
-		CrossOriginResourcePolicy:     "on",
-		OriginAgentCluster:            "on",
-		XPermittedCrossDomainPolicies: "on",
-		RemovePoweredBy:               "on",
+// SetDefaults ensures the default "on" values are applied if fields are empty.
+// This replaces the old CreateConfig() function.
+func (c *Config) SetDefaults() {
+	if c.XFrameOptions == "" {
+		c.XFrameOptions = "on"
+	}
+	if c.XDnsPrefetchControl == "" {
+		c.XDnsPrefetchControl = "on"
+	}
+	if c.XContentTypeOptions == "" {
+		c.XContentTypeOptions = "on"
+	}
+	if c.StrictTransportSecurity == "" {
+		c.StrictTransportSecurity = "on"
+	}
+	if c.ReferrerPolicy == "" {
+		c.ReferrerPolicy = "on"
+	}
+	if c.XXssProtection == "" {
+		c.XXssProtection = "on"
+	}
+	if c.CrossOriginOpenerPolicy == "" {
+		c.CrossOriginOpenerPolicy = "on"
+	}
+	if c.CrossOriginEmbedderPolicy == "" {
+		c.CrossOriginEmbedderPolicy = "on"
+	}
+	if c.CrossOriginResourcePolicy == "" {
+		c.CrossOriginResourcePolicy = "on"
+	}
+	if c.OriginAgentCluster == "" {
+		c.OriginAgentCluster = "on"
+	}
+	if c.XPermittedCrossDomainPolicies == "" {
+		c.XPermittedCrossDomainPolicies = "on"
+	}
+	if c.RemovePoweredBy == "" {
+		c.RemovePoweredBy = "on"
 	}
 }

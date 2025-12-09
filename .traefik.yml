@@ -2,17 +2,18 @@ displayName: Superheader Plugin
 type: middleware
 import: github.com/mridang/traefik-superheader
 iconPath: icon.png
-summary: 'A Traefik plugin to add the common security headers'
+summary: A Traefik plugin to add the common security headers
+runtime: wasm
 testData:
-  x-frame-options: "SAMEORIGIN"
+  x-frame-options: "sameorigin"
   x-dns-prefetch-control: "off"
-  x-content-type-options: "nosniff"
-  strict-transport-security: "max-age=31536000; includeSubDomains; preload"
+  x-content-type-options: "on"
+  strict-transport-security: "on"
   referrer-policy: "no-referrer-when-downgrade"
-  x-xss-protection: "1; mode=block"
+  x-xss-protection: "block"
   cross-origin-opener-policy: "same-origin"
   cross-origin-embedder-policy: "require-corp"
   cross-origin-resource-policy: "same-origin"
-  origin-agent-cluster: "true"
+  origin-agent-cluster: "on"
   x-permitted-cross-domain-policies: "none"
-  remove-powered-by: "true"
+  remove-powered-by: "on"

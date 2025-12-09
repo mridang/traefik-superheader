@@ -1,34 +1,28 @@
 services:
   traefik:
-    image: traefik:3.3.3
+    image: traefik:3.6.4
     ports:
       - "7080:80"
-    command:
-      - --api.dashboard=false
-      - --api.insecure=false
-      - --log.level=DEBUG
-      - --experimental.localPlugins.superheader.moduleName=github.com/mridang/traefik-superheader
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-      - '.:/plugins-local/src/github.com/mridang/traefik-superheader'
+      - './traefik.yml:/etc/traefik/traefik.yml'
+      - '../.traefik.yml:/plugins-local/src/github.com/mridang/traefik-superheader/.traefik.yml'
+      - '../build/plugin.wasm:/plugins-local/src/github.com/mridang/traefik-superheader/plugin.wasm'
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
-      - traefik.http.middlewares.superheader.plugin.superheader=true
 
-  hello: # http://localhost:7080/hello/
+  hello:
     image: testcontainers/helloworld
     expose:
       - "8080"
     labels:
       - traefik.enable=true
       - traefik.http.routers.hello.rule=PathPrefix(`/hello`)
-      - traefik.http.middlewares.strip-hello-prefix.stripprefix.prefixes=/hello
-      - traefik.http.routers.hello.middlewares=strip-hello-prefix
       - traefik.http.routers.hello.entrypoints=web
+      - traefik.http.routers.hello.middlewares=strip-hello-prefix,securehello
       - traefik.http.services.hello.loadbalancer.server.port=8080
+      - traefik.http.middlewares.strip-hello-prefix.stripprefix.prefixes=/hello
       - traefik.http.middlewares.securehello.plugin.superheader.x-frame-options=DENY
       - traefik.http.middlewares.securehello.plugin.superheader.x-dns-prefetch-control=on
       - traefik.http.middlewares.securehello.plugin.superheader.x-content-type-options=on
@@ -42,7 +36,7 @@ services:
       - traefik.http.middlewares.securehello.plugin.superheader.x-permitted-cross-domain-policies=on
       - traefik.http.middlewares.securehello.plugin.superheader.remove-powered-by=on
 
-  whoami: # http://localhost:7080/whoami/
+  whoami:
     image: traefik/whoami
     labels:
       - traefik.enable=true
