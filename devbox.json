@@ -2,17 +2,24 @@
   "$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
   "packages": [
     "golangci-lint@latest",
-    "tinygo@latest",
-    "go@1.23.5"
+    "go@1.22",
+    "tinygo@0.33.0"
   ],
   "shell": {
     "init_hook": [
-      "export \"GOROOT=$(go env GOROOT)\""
+      "export \"GOROOT=$(go env GOROOT)\"",
+      "go mod download"
     ],
     "scripts": {
-      "test": [
-        "echo \"Error: no test specified\" && exit 1"
-      ]
+      "test": "make test",
+      "build": "make build",
+      "lint": "make lint",
+      "format": "make format"
     }
+  },
+  "env": {
+    "GOMODCACHE": "$PWD/.go",
+    "GOTOOLCHAIN": "local",
+    "GOROOT": ""
   }
 }

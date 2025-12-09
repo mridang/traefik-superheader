@@ -50,7 +50,7 @@ func ValidateConfigJSONTags(cfg interface{}) error {
 			return fmt.Errorf("field %s has invalid json key %q; must be lower-case and dash-separated", field.Name, key)
 		}
 
-		// Convert the field name to dash-case and compare it to the json tag
+		// Convert the field name to dash-case and compare it to the `json` tag
 		expectedTag := toDashCase(field.Name)
 		if key != expectedTag {
 			return fmt.Errorf("field %s has json tag %q; it must match the field name %q", field.Name, key, expectedTag)

@@ -3,7 +3,7 @@
 **Superheader** is a plugin for Traefik that adds the necessary headers
 to responses to help secure web applications.
 
-The headers set are adhere to the recommendations of the OWASP Secure Headers 
+The headers set are adhere to the recommendations of the OWASP Secure Headers
 Project https://owasp.org/www-project-secure-headers/
 
 ##### Why ?

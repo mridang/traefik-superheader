@@ -1,0 +1,20 @@
+api:
+  dashboard: false
+  insecure: false
+
+log:
+  level: DEBUG
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+entryPoints:
+  web:
+    address: ":80"
+
+experimental:
+  localPlugins:
+    superheader:
+      moduleName: github.com/mridang/traefik-superheader
