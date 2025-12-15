@@ -1,13 +1,13 @@
 module github.com/mridang/traefik-superheader
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/http-wasm/http-wasm-guest-tinygo v0.4.0
 	github.com/http-wasm/http-wasm-host-go v0.7.0
 	github.com/steinfletcher/apitest v1.6.0
 	github.com/stretchr/testify v1.11.1
-	github.com/tetratelabs/wazero v1.8.0
+	github.com/tetratelabs/wazero v1.10.1
 )
 
 require (
