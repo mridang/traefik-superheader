@@ -3,7 +3,8 @@
   "packages": [
     "golangci-lint@latest",
     "go@1.22",
-    "tinygo@0.33.0"
+    "tinygo@0.33.0",
+    "gotestsum@latest"
   ],
   "shell": {
     "init_hook": [
