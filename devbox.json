@@ -21,6 +21,6 @@
   "env": {
     "GOMODCACHE": "$PWD/.go",
     "GOTOOLCHAIN": "local",
-    "GOROOT": ""
+    "GOROOT": null
   }
 }
