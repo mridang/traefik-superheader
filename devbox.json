@@ -7,10 +7,6 @@
     "gotestsum@latest"
   ],
   "shell": {
-    "init_hook": [
-      "export \"GOROOT=$(go env GOROOT)\"",
-      "go mod download"
-    ],
     "scripts": {
       "test": "make test",
       "build": "make build",
@@ -19,7 +15,7 @@
     }
   },
   "env": {
-    "GOMODCACHE": "$PWD/.go",
+    "GOMODCACHE": "$DEVBOX_PROJECT_ROOT/.go",
     "GOTOOLCHAIN": "local",
     "GOROOT": null
   }
