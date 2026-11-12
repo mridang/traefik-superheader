@@ -1,6 +1,6 @@
 name: Run Tests (Go)
 
-on: push
+on: pull_request
 
 permissions:
   contents: read
