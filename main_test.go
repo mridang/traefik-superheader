@@ -12,10 +12,11 @@ import (
 	"github.com/http-wasm/http-wasm-host-go/api"
 	"github.com/http-wasm/http-wasm-host-go/handler"
 	wasmhttp "github.com/http-wasm/http-wasm-host-go/handler/nethttp"
-	"github.com/mridang/traefik-superheader/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tetratelabs/wazero"
+
+	"github.com/mridang/traefik-superheader/internal"
 )
 
 func loadWasm(t *testing.T) []byte {
@@ -77,7 +78,7 @@ func createHandler(t *testing.T, config *internal.Config) (http.Handler, error) 
 	return mw.NewHandler(ctx, mock), nil
 }
 
-func assertResponseHeader(t *testing.T, key string, expected interface{}, configure func(*internal.Config)) {
+func assertResponseHeader(t *testing.T, key string, expected any, configure func(*internal.Config)) {
 	config := &internal.Config{}
 	config.SetDefaults()
 	configure(config)
@@ -138,9 +139,14 @@ func TestXContentTypeOptions(t *testing.T) {
 }
 
 func TestStrictTransportSecurity(t *testing.T) {
-	assertResponseHeader(t, "Strict-Transport-Security", "max-age=31536000; includeSubDomains", func(c *internal.Config) {
-		c.StrictTransportSecurity = "on"
-	})
+	assertResponseHeader(
+		t,
+		"Strict-Transport-Security",
+		"max-age=31536000; includeSubDomains",
+		func(c *internal.Config) {
+			c.StrictTransportSecurity = "on"
+		},
+	)
 	assertResponseHeader(t, "Strict-Transport-Security", nil, func(c *internal.Config) {
 		c.StrictTransportSecurity = "off"
 	})

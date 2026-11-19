@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"sync"
@@ -17,11 +18,11 @@ func getBuildOnce() *sync.Once {
 // runPluginBuild executes 'make build' exactly once.
 func runPluginBuild(t *testing.T) {
 	getBuildOnce().Do(func() {
-		if err := os.Mkdir("build", 0755); err != nil && !os.IsExist(err) {
+		if err := os.Mkdir("build", 0o750); err != nil && !os.IsExist(err) {
 			t.Fatalf("failed to create build directory: %v", err)
 		}
 
-		buildCmd := exec.Command("make", "build")
+		buildCmd := exec.CommandContext(context.Background(), "make", "build")
 		out, err := buildCmd.CombinedOutput()
 
 		if err != nil {
