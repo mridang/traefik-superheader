@@ -42,7 +42,7 @@ build: $(WASM_TARGET)
 
 $(WASM_TARGET): $(SOURCES)
 	mkdir -p $(BUILD_DIR)
-	tinygo build -o $@ -scheduler=none --no-debug -target=wasip1 main.go
+	tinygo build -o $@ -scheduler=none --no-debug -target=wasip1 -buildmode=wasi-legacy main.go
 
 # Format all Go files
 format: $(GOIMPORTS_BIN)

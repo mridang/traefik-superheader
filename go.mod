@@ -1,6 +1,6 @@
 module github.com/mridang/traefik-superheader
 
-go 1.22
+go 1.27.1
 
 require (
 	github.com/http-wasm/http-wasm-guest-tinygo v0.4.0

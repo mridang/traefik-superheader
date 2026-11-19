@@ -2,8 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
   "packages": [
     "golangci-lint@latest",
-    "go@1.22",
-    "tinygo@0.33.0",
+    "go@1.27",
+    "tinygo@0.42.0",
     "gotestsum@latest"
   ],
   "shell": {

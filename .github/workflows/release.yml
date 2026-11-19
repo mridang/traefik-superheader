@@ -35,7 +35,7 @@ jobs:
       - name: Setup TinyGo
         uses: acifani/setup-tinygo@v2
         with:
-          tinygo-version: '0.33.0'
+          tinygo-version: '0.42.0'
 
       - name: Run semantic-release
         uses: mridang/action-semantic-release@v2
