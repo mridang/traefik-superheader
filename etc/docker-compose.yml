@@ -4,10 +4,10 @@ services:
     ports:
       - "7080:80"
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - './traefik.yml:/etc/traefik/traefik.yml'
-      - '../.traefik.yml:/plugins-local/src/github.com/mridang/traefik-superheader/.traefik.yml'
-      - '../build/plugin.wasm:/plugins-local/src/github.com/mridang/traefik-superheader/plugin.wasm'
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik.yml:/etc/traefik/traefik.yml"
+      - "../.traefik.yml:/plugins-local/src/github.com/mridang/traefik-superheader/.traefik.yml"
+      - "../build/plugin.wasm:/plugins-local/src/github.com/mridang/traefik-superheader/plugin.wasm"
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
