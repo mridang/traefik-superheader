@@ -43,10 +43,6 @@
       "last_modified": "2026-11-06T15:06:19Z",
       "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601?lastModified=1793977579&narHash=sha256-WrSODdZFVIs%2FHh2NzC0bY%2BROByi0bATg8WfePX8dPj8%3D"
     },
-    "github:NixOS/nixpkgs/nixpkgs-unstable#golangci-lint": {
-      "last_modified": "2026-11-06T15:06:19Z",
-      "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601?lastModified=1793977579&narHash=sha256-WrSODdZFVIs%2FHh2NzC0bY%2BROByi0bATg8WfePX8dPj8%3D#golangci-lint"
-    },
     "go@1.27": {
       "last_modified": "2026-10-02T22:55:44Z",
       "resolved": "github:NixOS/nixpkgs/55ba7f49ef2962b42cbd126522b7df5f95037679#go_1_27",
@@ -82,54 +78,6 @@
             }
           ],
           "store_path": "/nix/store/pn86sk63a2lpmwx16vj4s5871slkyzfw-go-1.27.1"
-        }
-      }
-    },
-    "gotestsum@latest": {
-      "last_modified": "2025-12-31T03:27:36Z",
-      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#gotestsum",
-      "source": "devbox-search",
-      "version": "1.13.0",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/cqc04v8y21bh8h5bznm2lk6jhvk7v921-gotestsum-1.13.0",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/cqc04v8y21bh8h5bznm2lk6jhvk7v921-gotestsum-1.13.0"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/vxx7hdmmx8kjsi5iqwbjw53n8b3dj9h8-gotestsum-1.13.0",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/vxx7hdmmx8kjsi5iqwbjw53n8b3dj9h8-gotestsum-1.13.0"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/ydjby1a80swvrkgkkwy9fm1vcz2fwysc-gotestsum-1.13.0",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/ydjby1a80swvrkgkkwy9fm1vcz2fwysc-gotestsum-1.13.0"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/wq1114466a77h8rkjjr8wrdznppl34ly-gotestsum-1.13.0",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/wq1114466a77h8rkjjr8wrdznppl34ly-gotestsum-1.13.0"
         }
       }
     },
