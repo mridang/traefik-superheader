@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -30,7 +31,7 @@ func TestTraefikPlugin(t *testing.T) {
 		assert.NoError(t, downErr, "failed to tear down docker compose: %s", downOut)
 	}()
 
-	time.Sleep(2 * time.Second)
+	waitForRoutes(t, baseURL+"/hello/", baseURL+"/whoami/")
 
 	t.Run("HelloService_StrictHeaders", func(t *testing.T) {
 		apitest.New().
@@ -72,4 +73,27 @@ func serverTimingAssertion(res *http.Response, _ *http.Request) error {
 	}
 
 	return nil
+}
+
+// waitForRoutes blocks until Traefik serves every URL with a non-404 status,
+// because the Docker provider publishes the routes some time after startup.
+func waitForRoutes(t *testing.T, urls ...string) {
+	t.Helper()
+
+	for _, url := range urls {
+		require.Eventually(t, func() bool {
+			req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+			if err != nil {
+				return false
+			}
+
+			res, err := http.DefaultClient.Do(req)
+			if err != nil {
+				return false
+			}
+			defer func() { _ = res.Body.Close() }()
+
+			return res.StatusCode != http.StatusNotFound
+		}, 60*time.Second, 500*time.Millisecond, "route %s never became available", url)
+	}
 }

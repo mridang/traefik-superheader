@@ -35,7 +35,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - my-middleware  # Apply the middleware to the router
+        - my-middleware # Apply the middleware to the router
 
 middlewares:
   superheader:
@@ -96,7 +96,7 @@ services:
       - --providers.docker=true
       - --entrypoints.web.address=:80
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - "/var/run/docker.sock:/var/run/docker.sock"
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080

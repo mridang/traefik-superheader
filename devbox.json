@@ -1,22 +1,22 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.3/.schema/devbox.schema.json",
-  "packages": [
-    "golangci-lint@latest",
-    "go@1.22",
-    "tinygo@0.33.0",
-    "gotestsum@latest"
-  ],
-  "shell": {
-    "scripts": {
-      "test": "make test",
-      "build": "make build",
-      "lint": "make lint",
-      "format": "make format"
-    }
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.10.7/.schema/devbox.schema.json",
+  "packages": {
+    "dprint": "latest",
+    "go": "1.27",
+    "tinygo": "0.42.0"
   },
   "env": {
     "GOMODCACHE": "$DEVBOX_PROJECT_ROOT/.go",
     "GOTOOLCHAIN": "local",
     "GOROOT": null
+  },
+  "shell": {
+    "scripts": {
+      "test": "make test",
+      "build": "make build",
+      "lint": "make lint",
+      "format": "make format",
+      "generate": "make generate"
+    }
   }
 }

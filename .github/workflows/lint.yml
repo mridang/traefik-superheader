@@ -9,6 +9,9 @@ defaults:
   run:
     working-directory: ./
 
+env:
+  GONOSUMDB: github.com/mridang/traefik-superheader/*
+
 jobs:
   code-linting:
     runs-on: ubuntu-latest
@@ -23,9 +26,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          go-version-file: "go.mod"
 
-      - name: Run GolangCILint
-        uses: golangci/golangci-lint-action@v5
-        with:
-          version: latest
+      - name: Lint
+        run: make lint

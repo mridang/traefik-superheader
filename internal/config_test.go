@@ -25,7 +25,7 @@ func toDashCase(fieldName string) string {
 
 // ValidateConfigJSONTags validates that the JSON tags in a struct are all lowercase, dash-separated,
 // and that the tag name matches the field name converted to dash-case.
-func ValidateConfigJSONTags(cfg interface{}) error {
+func ValidateConfigJSONTags(cfg any) error {
 	v := reflect.TypeOf(cfg)
 	if v.Kind() != reflect.Struct {
 		return fmt.Errorf("expected a struct, got %s", v.Kind())
@@ -47,7 +47,11 @@ func ValidateConfigJSONTags(cfg interface{}) error {
 
 		// Check if the tag is lowercase and dash-separated
 		if !validKey.MatchString(key) {
-			return fmt.Errorf("field %s has invalid json key %q; must be lower-case and dash-separated", field.Name, key)
+			return fmt.Errorf(
+				"field %s has invalid json key %q; must be lower-case and dash-separated",
+				field.Name,
+				key,
+			)
 		}
 
 		// Convert the field name to dash-case and compare it to the `json` tag
